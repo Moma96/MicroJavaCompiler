@@ -1,0 +1,11 @@
+program MJProgram
+{
+	void main()
+	{
+		print(12);
+		print('a');
+		print(false);
+		
+		print(123);
+	}
+}

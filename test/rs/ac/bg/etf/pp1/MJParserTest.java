@@ -17,8 +17,8 @@ import rs.ac.bg.etf.pp1.util.Log4JUtils;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 
-public class Compiler {
-
+public class MJParserTest {
+	
 	static {
 		DOMConfigurator.configure(Log4JUtils.instance().findLoggerConfigFile());
 		Log4JUtils.instance().prepareLogFile(Logger.getRootLogger());
@@ -26,39 +26,40 @@ public class Compiler {
 	
 	public static void main(String[] args) throws Exception {
 		
-		Logger log = Logger.getLogger(Compiler.class);
+		Logger log = Logger.getLogger(MJParserTest.class);
 		
 		Reader br = null;
 		try {
-			String sourceCodePath = args[0];
-			File sourceCode = new File(sourceCodePath);
+			File sourceCode = new File("test/program.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 			
 			br = new BufferedReader(new FileReader(sourceCode));
 			Yylex lexer = new Yylex(br);
-			MJParser parser = new MJParser(lexer);
-			Symbol s = parser.parse();
+		
+			MJParser p = new MJParser(lexer);
+			Symbol s = p.parse();
 			
-			Program prog = (Program)s.value;
-			// Initialize symbol table
-			Tab.init();
-			log.info("Syntax tree:");
+			Program prog = (Program)(s.value);
+			Tab.init(); // Inicijalizuj tabelu simbola
+			
+			// Ispis sintaksnog stabla
 			log.info(prog.toString(""));
+			log.info("=====================================================");
 			
-			log.info("Semantic validation:");	
-			SemanticPass semanticPass = new SemanticPass();
-			prog.traverseBottomUp(semanticPass);
+			// Ispis prepoznatih programskih konstrukcija
+			SemanticPass v = new SemanticPass();
+			prog.traverseBottomUp(v);
 			
+			log.info("=====================================================");
 			Tab.dump();
 			
-			if (!parser.errorDetected && semanticPass.passed()) {
-				String objFilePath = args[1];
-				File objFile = new File(objFilePath);
+			if (!p.errorDetected && v.passed()) {
+				File objFile = new File("test/program.obj");
 				if (objFile.exists()) objFile.delete();
 				
 				CodeGenerator codeGenerator = new CodeGenerator();
 				prog.traverseBottomUp(codeGenerator);
-				Code.dataSize = semanticPass.nVars;
+				Code.dataSize = v.nVars;
 				Code.mainPc = codeGenerator.getMainPc();
 				Code.write(new FileOutputStream(objFile));
 				log.info("Parsing successfully finished!");
@@ -73,5 +74,4 @@ public class Compiler {
 			}
 		}
 	}
-
 }
