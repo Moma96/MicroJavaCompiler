@@ -5,24 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class MethodTypeName implements SyntaxNode {
+public class ProgramName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private String methName;
+    private String name;
 
-    public MethodTypeName (String methName) {
-        this.methName=methName;
+    public ProgramName (String name) {
+        this.name=name;
     }
 
-    public String getMethName() {
-        return methName;
+    public String getName() {
+        return name;
     }
 
-    public void setMethName(String methName) {
-        this.methName=methName;
+    public void setName(String name) {
+        this.name=name;
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +59,13 @@ public class MethodTypeName implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("MethodTypeName(\n");
+        buffer.append("ProgramName(\n");
 
-        buffer.append(" "+tab+methName);
+        buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [MethodTypeName]");
+        buffer.append(") [ProgramName]");
         return buffer.toString();
     }
 }

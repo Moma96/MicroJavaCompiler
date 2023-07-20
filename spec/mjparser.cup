@@ -46,15 +46,15 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal VarDeclList, MethodDeclList, VarDecl;
-nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
-nonterminal ActualPars, ActualParamList;
-nonterminal Matched, Unmatched;
+nonterminal MethodDeclList;
+nonterminal StatementList, Statement;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
 
-Program ::= (Program) PROGRAM IDENT:progName LBRACE MethodDeclList RBRACE;
+Program ::= (Program) PROGRAM ProgramName LBRACE MethodDeclList RBRACE;
+
+ProgramName ::= (ProgramName) IDENT:name;
 
 MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				|

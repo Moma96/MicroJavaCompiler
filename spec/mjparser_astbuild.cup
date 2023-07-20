@@ -46,23 +46,16 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal VarDeclList VarDeclList;
 nonterminal MethodDeclList MethodDeclList;
-nonterminal VarDecl VarDecl;
-nonterminal FormPars FormPars;
 nonterminal StatementList StatementList;
-nonterminal FormalParamList FormalParamList;
-nonterminal FormalParamDecl FormalParamDecl;
 nonterminal Statement Statement;
-nonterminal ActualPars ActualPars;
-nonterminal ActualParamList ActualParamList;
-nonterminal Matched Matched;
-nonterminal Unmatched Unmatched;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
 
-Program ::= (Program) PROGRAM IDENT:progName LBRACE MethodDeclList:M1 RBRACE {: RESULT=new Program(progName, M1); RESULT.setLine(progNameleft); :};
+Program ::= (Program) PROGRAM ProgramName:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(P1, M2); RESULT.setLine(P1left); :};
+
+ProgramName ::= (ProgramName) IDENT:name {: RESULT=new ProgramName(name); RESULT.setLine(nameleft); :};
 
 MethodDeclList ::= (MethodDeclarations) MethodDeclList:M1 MethodDecl:M2 {: RESULT=new MethodDeclarations(M1, M2); RESULT.setLine(M1left); :}
 				|

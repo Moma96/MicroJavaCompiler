@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.ac.bg.etf.pp1.util.Utils;
+import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.*;
 
 public class SemanticPass extends VisitorAdaptor {
@@ -15,7 +16,7 @@ public class SemanticPass extends VisitorAdaptor {
 	
 	Logger log = Logger.getLogger(getClass());
 	
-	public void report_error(String message, SyntaxNode info) {
+	private void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
 		StringBuilder msg = new StringBuilder(message);
 		int line = (info == null) ? 0 : info.getLine();
@@ -24,12 +25,25 @@ public class SemanticPass extends VisitorAdaptor {
 		log.error(msg.toString());
 	}
 	
-	public void report_info(String message, SyntaxNode info) {
+	private void report_info(String message, SyntaxNode info) {
 		StringBuilder msg = new StringBuilder(message);
 		int line = (info == null) ? 0 : info.getLine();
 		if (line != 0)
-			msg.append(" na liniji " + line);
+			msg.append(" in line " + line);
 		log.info(msg.toString());
+	}
+	
+	public void visit(ProgramName programName) {
+		programName.obj = Tab.insert(Obj.Prog, programName.getName(), Tab.noType);
+		Tab.openScope();
+		log.info("Program openScope");
+	}
+	
+	public void visit(Program program) {
+		nVars = Tab.currentScope.getnVars();
+		Tab.chainLocalSymbols(program.getProgramName().obj);
+		Tab.closeScope();
+		log.info("Program closeScope");
 	}
 	
 	public void visit(PrintStatement print) {
