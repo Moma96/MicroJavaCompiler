@@ -5,7 +5,11 @@ program MJProgram
 		print(12);
 		print('a');
 		print(false);
+		print(1234);
+		print(true);
+		print(false);
+		print(true);
+		print(false);
 		
-		print(123);
 	}
 }

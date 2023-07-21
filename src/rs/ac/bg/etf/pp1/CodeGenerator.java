@@ -8,6 +8,7 @@ import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
 import rs.ac.bg.etf.pp1.ast.NumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
+import rs.ac.bg.etf.pp1.ast.ProgramName;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.ac.bg.etf.pp1.util.Utils;
@@ -31,6 +32,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		return mainPc;
 	}
 	
+	public void visit(ProgramName programName) {
+		Utils.Initialize();
+	}
+	
 	public void visit(PrintStatement print) {
 		if (Utils.intStruct == print.getFactor().struct) {
 			Code.loadConst(5);
@@ -39,12 +44,9 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.loadConst(5);
 			Code.put(Code.bprint);
 		} else if (Utils.boolStruct == print.getFactor().struct) {
-			Code.put(Code.pop);
-			if (Utils.boolExpresionStack.pop()) {
-				Utils.print("true", 5);
-			} else {
-				Utils.print("false", 5);
-			}
+			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
+			Code.put(Code.call);
+			Code.put2(printBoolAdrOffset);
 		}
 	}
 	
@@ -58,7 +60,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public void visit(BoolConst cnst) {
 		Code.load(Utils.createGlobalConst(cnst.getB1(), cnst.struct));
-		Utils.boolExpresionStack.push(cnst.getB1() == 1);
 	}
 	
 	public void visit(MethodTypeName methodTypeName) {
