@@ -60,7 +60,7 @@ public class Compiler {
 				
 				CodeGenerator codeGenerator = new CodeGenerator();
 				prog.traverseBottomUp(codeGenerator);
-				Code.dataSize = semanticPass.nVars;
+				Code.dataSize = semanticPass.nProgramVars;
 				Code.mainPc = codeGenerator.getMainPc();
 				Code.write(new FileOutputStream(objFile));
 				log.info("Parsing successfully finished!");

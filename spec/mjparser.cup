@@ -46,10 +46,9 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, VarDeclList, Assignop;
-nonterminal StatementList, Statement;
+nonterminal MethodDeclList, VarDeclList, VarDeclNameList, StatementList, VarDecl, Assignop, Statement;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
 
 Program ::= (Program) PROGRAM ProgramName VarDeclList LBRACE MethodDeclList RBRACE;
@@ -58,16 +57,23 @@ ProgramName ::= (ProgramName) IDENT:name;
 
 VarDeclList ::= (VarDeclarations) VarDeclList VarDecl 
 			|
-			(NoVarDecl) /* epsilon */
+			(NoVarDeclaration) /* epsilon */
 			;
 
-VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
+VarDecl ::= (VarDecl) Type:varType VarDeclNameList:varNames SEMI;
 
 Type ::= (Type) IDENT:typeName;
 
+VarDeclNameList ::= (VarDeclNames) VarDeclNameList COMMA VarDeclName:varName
+					|
+					(OneVarDeclName) VarDeclName:varName
+					;
+
+VarDeclName ::= (VarDeclName) IDENT:varName;				
+
 MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				|
-				(NoMethodDecl) /* epsilon */
+				(NoMethodDeclarations) /* epsilon */
 				;
 			
 MethodDecl ::= (MethodDecl) VOID MethodTypeName LPAREN RPAREN VarDeclList LBRACE StatementList RBRACE;

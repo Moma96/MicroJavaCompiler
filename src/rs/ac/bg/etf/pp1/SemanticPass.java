@@ -1,5 +1,8 @@
 package rs.ac.bg.etf.pp1;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
@@ -8,17 +11,18 @@ import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.*;
 
 public class SemanticPass extends VisitorAdaptor {
-	Obj currentMethod = null;
-	boolean returnFound = false;
-	boolean errorDetected = false;
+	private boolean errorDetected = false;
 	
-	int nVars;
+	private Obj currentMethod = null;
+	private List<VarDeclName> currentVarDeclNames = new ArrayList<VarDeclName>();
+	
+	public int nProgramVars;
 	
 	Logger log = Logger.getLogger(getClass());
 	
 	private void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
-		StringBuilder msg = new StringBuilder(message);
+		StringBuilder msg = new StringBuilder("Semantic error: " + message);
 		int line = (info == null) ? 0 : info.getLine();
 		if (line != 0)
 			msg.append(" in line " + line);
@@ -40,42 +44,57 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 	
 	public void visit(Program program) {
-		nVars = Tab.currentScope.getnVars();
+		nProgramVars = Tab.currentScope.getnVars();
 		Tab.chainLocalSymbols(program.getProgramName().obj);
 		Tab.closeScope();
 		log.info("Program closeScope");
 	}
 	
 	public void visit(MethodTypeName methodTypeName) {
-		currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethName(), Tab.noType); // Struct should be return type of the method
+		currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethName(), Tab.noType); // Currently are only void functions supported
 		methodTypeName.obj = currentMethod;
 		Tab.openScope();
 		report_info("function '" + methodTypeName.getMethName() + "' processing started", methodTypeName);
 	}
 	
 	public void visit(MethodDecl methodDecl) {
-		if (!returnFound && currentMethod.getType() != Tab.noType) {
-			report_error("Greska: funkcija " + currentMethod.getName() + " nema return iskaz", methodDecl);
-		}
 		Tab.chainLocalSymbols(currentMethod);
 		Tab.closeScope();
 		report_info("function '" + currentMethod.getName() + "' processing is finished", methodDecl);
 		
-		returnFound = false;
 		currentMethod = null;
 	}
-	
+		
 	public void visit(VarDecl varDecl) {
-		report_info("Var declared '" + varDecl.getVarName() + "'", varDecl);
-		Tab.insert(Obj.Var, varDecl.getVarName(), varDecl.getType().struct);
+		for(VarDeclName varDeclName: currentVarDeclNames) {
+			if (Tab.find(varDeclName.getVarName()) != Tab.noObj) {
+				report_error("Var '" + varDeclName.getVarName() + "' is already declared in current scope", varDecl);
+			} else {
+				report_info("Var declared '" + varDeclName.getVarName() + "'", varDecl);
+				Tab.insert(Obj.Var, varDeclName.getVarName(), varDecl.getType().struct);	
+			}
+		}
+		currentVarDeclNames.clear();
+	}
+	
+	public void visit(VarDeclName varDeclName) {
+		currentVarDeclNames.add(varDeclName);
 	}
 	
 	public void visit(Designator designator) {
 		Obj obj = Tab.find(designator.getName());
 		if (obj == Tab.noObj) {
-			report_error("Error: name " + designator.getName() + " is not declared", designator);
+			report_error("Name " + designator.getName() + " is not declared", designator);
 		}
 		designator.obj = obj;
+	}
+	
+	public void visit(Assignment assignment) {
+		Struct factorType = assignment.getFactor().struct;
+		Struct destinationType = assignment.getDesignator().obj.getType();
+		if (!factorType.assignableTo(destinationType)) {
+			report_error("Not compatible types in assignment", assignment);
+		}
 	}
 	
 	public void visit(Type type) {
@@ -84,7 +103,7 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Type " + type.getTypeName() + " not found in symbol table", type);
 			type.struct = Tab.noType;
 		} else if (typeNode.getKind() != Obj.Type) {
-			report_error("Error: Identifier " + type.getTypeName() + " is not a type", type);
+			report_error("Identifier " + type.getTypeName() + " is not a type", type);
 			type.struct = Tab.noType;
 		} else {
 			type.struct = typeNode.getType();
@@ -94,7 +113,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(PrintStatement print) {
 		Struct factorStruct = print.getFactor().struct;
 		if (!factorStruct.equals(Tab.intType) && !factorStruct.equals(Tab.charType) && !factorStruct.equals(Utils.boolType))
-			report_error("Semantic error: PRINT operand must be int, char or bool", print);
+			report_error("PRINT operand must be int, char or bool", print);
 	}
 
 	public void visit(Var var) {

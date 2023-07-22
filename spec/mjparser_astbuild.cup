@@ -48,11 +48,13 @@ terminal String IDENT;
 
 nonterminal MethodDeclList MethodDeclList;
 nonterminal VarDeclList VarDeclList;
-nonterminal Assignop Assignop;
+nonterminal VarDeclNameList VarDeclNameList;
 nonterminal StatementList StatementList;
+nonterminal VarDecl VarDecl;
+nonterminal Assignop Assignop;
 nonterminal Statement Statement;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
 
 Program ::= (Program) PROGRAM ProgramName:P1 VarDeclList:V2 LBRACE MethodDeclList:M3 RBRACE {: RESULT=new Program(P1, V2, M3); RESULT.setLine(P1left); :};
@@ -61,16 +63,23 @@ ProgramName ::= (ProgramName) IDENT:name {: RESULT=new ProgramName(name); RESULT
 
 VarDeclList ::= (VarDeclarations) VarDeclList:V1 VarDecl:V2 {: RESULT=new VarDeclarations(V1, V2); RESULT.setLine(V1left); :} 
 			|
-			(NoVarDecl) {: RESULT=new NoVarDecl(); :} /* epsilon */
+			(NoVarDeclaration) {: RESULT=new NoVarDeclaration(); :} /* epsilon */
 			;
 
-VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI {: RESULT=new VarDecl(varType, varName); RESULT.setLine(varTypeleft); :};
+VarDecl ::= (VarDecl) Type:varType VarDeclNameList:varNames SEMI {: RESULT=new VarDecl(varType, varNames); RESULT.setLine(varTypeleft); :};
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
 
+VarDeclNameList ::= (VarDeclNames) VarDeclNameList:V1 COMMA VarDeclName:varName {: RESULT=new VarDeclNames(V1, varName); RESULT.setLine(V1left); :}
+					|
+					(OneVarDeclName) VarDeclName:varName {: RESULT=new OneVarDeclName(varName); RESULT.setLine(varNameleft); :}
+					;
+
+VarDeclName ::= (VarDeclName) IDENT:varName {: RESULT=new VarDeclName(varName); RESULT.setLine(varNameleft); :};				
+
 MethodDeclList ::= (MethodDeclarations) MethodDeclList:M1 MethodDecl:M2 {: RESULT=new MethodDeclarations(M1, M2); RESULT.setLine(M1left); :}
 				|
-				(NoMethodDecl) {: RESULT=new NoMethodDecl(); :} /* epsilon */
+				(NoMethodDeclarations) {: RESULT=new NoMethodDeclarations(); :} /* epsilon */
 				;
 			
 MethodDecl ::= (MethodDecl) VOID MethodTypeName:M1 LPAREN RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDecl(M1, V2, S3); RESULT.setLine(M1left); :};

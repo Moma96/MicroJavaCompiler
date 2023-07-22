@@ -5,24 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class VarDeclName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private String typeName;
+    private String varName;
 
-    public Type (String typeName) {
-        this.typeName=typeName;
+    public VarDeclName (String varName) {
+        this.varName=varName;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getVarName() {
+        return varName;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName=typeName;
+    public void setVarName(String varName) {
+        this.varName=varName;
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +59,13 @@ public class Type implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
+        buffer.append("VarDeclName(\n");
 
-        buffer.append(" "+tab+typeName);
+        buffer.append(" "+tab+varName);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [VarDeclName]");
         return buffer.toString();
     }
 }
