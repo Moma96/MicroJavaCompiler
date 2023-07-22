@@ -1,15 +1,21 @@
 program MJProgram
 {
 	void main()
+		bool a;
+		bool b;
+		bool c;
+		int d;
 	{
-		print(12);
-		print('a');
-		print(false);
-		print(1234);
-		print(true);
-		print(false);
-		print(true);
-		print(false);
+		a = true;
+		a = false;
+		b = true;
+		c = b;
+		d = 14;
 		
+		// print test
+		print(a);
+		print(b);
+		print(c);
+		print(d);
 	}
 }

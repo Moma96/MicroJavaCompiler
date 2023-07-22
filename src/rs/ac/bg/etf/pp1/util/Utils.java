@@ -7,17 +7,19 @@ import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class Utils {
 	
-	public static final Struct
-			intStruct = new Struct(Struct.Int),
-			charStruct = new Struct(Struct.Char),
-			boolStruct = new Struct(Struct.Bool);
+	public static final Struct boolType = new Struct(Struct.Bool);
 	
 	private static int _printBoolAdr;
 	public static int getPrintBoolAdr() {
 		return _printBoolAdr;
 	}
 	
-	public static void Initialize() {
+	public static void tabInit() {
+		Tab.init();
+		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
+	}
+	
+	public static void codeGeneratorInit() {
 		printBool();
 	}
 	

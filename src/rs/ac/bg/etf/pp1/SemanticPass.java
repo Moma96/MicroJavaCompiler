@@ -21,7 +21,7 @@ public class SemanticPass extends VisitorAdaptor {
 		StringBuilder msg = new StringBuilder(message);
 		int line = (info == null) ? 0 : info.getLine();
 		if (line != 0)
-			msg.append(" na liniji " + line);
+			msg.append(" in line " + line);
 		log.error(msg.toString());
 	}
 	
@@ -46,21 +46,71 @@ public class SemanticPass extends VisitorAdaptor {
 		log.info("Program closeScope");
 	}
 	
+	public void visit(MethodTypeName methodTypeName) {
+		currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethName(), Tab.noType); // Struct should be return type of the method
+		methodTypeName.obj = currentMethod;
+		Tab.openScope();
+		report_info("function '" + methodTypeName.getMethName() + "' processing started", methodTypeName);
+	}
+	
+	public void visit(MethodDecl methodDecl) {
+		if (!returnFound && currentMethod.getType() != Tab.noType) {
+			report_error("Greska: funkcija " + currentMethod.getName() + " nema return iskaz", methodDecl);
+		}
+		Tab.chainLocalSymbols(currentMethod);
+		Tab.closeScope();
+		report_info("function '" + currentMethod.getName() + "' processing is finished", methodDecl);
+		
+		returnFound = false;
+		currentMethod = null;
+	}
+	
+	public void visit(VarDecl varDecl) {
+		report_info("Var declared '" + varDecl.getVarName() + "'", varDecl);
+		Tab.insert(Obj.Var, varDecl.getVarName(), varDecl.getType().struct);
+	}
+	
+	public void visit(Designator designator) {
+		Obj obj = Tab.find(designator.getName());
+		if (obj == Tab.noObj) {
+			report_error("Error: name " + designator.getName() + " is not declared", designator);
+		}
+		designator.obj = obj;
+	}
+	
+	public void visit(Type type) {
+		Obj typeNode = Tab.find(type.getTypeName());
+		if (typeNode == Tab.noObj) {
+			report_error("Type " + type.getTypeName() + " not found in symbol table", type);
+			type.struct = Tab.noType;
+		} else if (typeNode.getKind() != Obj.Type) {
+			report_error("Error: Identifier " + type.getTypeName() + " is not a type", type);
+			type.struct = Tab.noType;
+		} else {
+			type.struct = typeNode.getType();
+		}
+	}
+	
 	public void visit(PrintStatement print) {
-		if (print.getFactor().struct != Utils.intStruct && print.getFactor().struct != Utils.charStruct && print.getFactor().struct != Utils.boolStruct)
+		Struct factorStruct = print.getFactor().struct;
+		if (!factorStruct.equals(Tab.intType) && !factorStruct.equals(Tab.charType) && !factorStruct.equals(Utils.boolType))
 			report_error("Semantic error: PRINT operand must be int, char or bool", print);
 	}
 
+	public void visit(Var var) {
+		var.struct = var.getDesignator().obj.getType();
+	}
+	
 	public void visit(NumConst cnst) {
-		cnst.struct = Utils.intStruct;
+		cnst.struct = Tab.intType;
 	}
 	
 	public void visit(CharConst cnst) {
-		cnst.struct = Utils.charStruct;
+		cnst.struct = Tab.charType;
 	}
 	
 	public void visit(BoolConst cnst) {
-		cnst.struct = Utils.boolStruct;
+		cnst.struct = Utils.boolType;
 	}
 	
 	public boolean passed() {

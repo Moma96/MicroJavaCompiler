@@ -46,22 +46,31 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList;
+nonterminal MethodDeclList, VarDeclList, Assignop;
 nonterminal StatementList, Statement;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDecl, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
 
-Program ::= (Program) PROGRAM ProgramName LBRACE MethodDeclList RBRACE;
+Program ::= (Program) PROGRAM ProgramName VarDeclList LBRACE MethodDeclList RBRACE;
 
 ProgramName ::= (ProgramName) IDENT:name;
+
+VarDeclList ::= (VarDeclarations) VarDeclList VarDecl 
+			|
+			(NoVarDecl) /* epsilon */
+			;
+
+VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
+
+Type ::= (Type) IDENT:typeName;
 
 MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				|
 				(NoMethodDecl) /* epsilon */
 				;
 			
-MethodDecl ::= (MethodDecl) VOID MethodTypeName LPAREN RPAREN LBRACE StatementList RBRACE;
+MethodDecl ::= (MethodDecl) VOID MethodTypeName LPAREN RPAREN VarDeclList LBRACE StatementList RBRACE;
 
 MethodTypeName ::= (MethodTypeName) IDENT:methName;
 		
@@ -73,12 +82,20 @@ StatementList ::= (Statements) StatementList Statement
 Statement ::= (ErrorStatement) error SEMI:k
 			{: parser.report_error("Error recovery until ; in line " + kleft, null); :}
 			|
+			(Assignment) Designator:dest Assignop Factor SEMI
+			|
 			(PrintStatement) PRINT LPAREN Factor RPAREN SEMI
 			;
-			
-Factor ::= (NumConst) NUM
+		
+Factor ::= (Var) Designator:d
+		|
+		(NumConst) NUM
 		|
 		(CharConst) CHAR
 		|
 		(BoolConst) BOOL
 		;
+
+Designator ::= (Designator) IDENT:name;
+
+Assignop ::= (Assignop) EQUALS;

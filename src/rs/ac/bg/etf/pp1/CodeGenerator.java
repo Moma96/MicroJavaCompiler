@@ -2,17 +2,22 @@ package rs.ac.bg.etf.pp1;
 
 import org.apache.log4j.Logger;
 
+import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.Assignment;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
 import rs.ac.bg.etf.pp1.ast.NumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
+import rs.ac.bg.etf.pp1.ast.Var;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
 
 public class CodeGenerator extends VisitorAdaptor {
 	
@@ -33,17 +38,29 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(ProgramName programName) {
-		Utils.Initialize();
+		Utils.codeGeneratorInit();
+	}
+	
+	public void visit(Designator designator) {
+		SyntaxNode parent = designator.getParent();
+		
+		if (Var.class == parent.getClass()) {
+			Code.load(designator.obj);
+		}
+	}
+	
+	public void visit(Assignment assignment) {
+		Code.store(assignment.getDesignator().obj);
 	}
 	
 	public void visit(PrintStatement print) {
-		if (Utils.intStruct == print.getFactor().struct) {
+		if (Tab.intType.equals(print.getFactor().struct)) {
 			Code.loadConst(5);
 			Code.put(Code.print);
-		} else if (Utils.charStruct == print.getFactor().struct) {
+		} else if (Tab.charType.equals(print.getFactor().struct)) {
 			Code.loadConst(5);
 			Code.put(Code.bprint);
-		} else if (Utils.boolStruct == print.getFactor().struct) {
+		} else if (Utils.boolType.equals(print.getFactor().struct)) {
 			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
 			Code.put(Code.call);
 			Code.put2(printBoolAdrOffset);
@@ -67,9 +84,16 @@ public class CodeGenerator extends VisitorAdaptor {
 			mainPc = Code.pc;
 		}
 		
+		methodTypeName.obj.setAdr(Code.pc);
+		SyntaxNode methodNode = methodTypeName.getParent();
+		
+		VarCounter varCnt = new VarCounter();
+		methodNode.traverseTopDown(varCnt);
+				
 		Code.put(Code.enter);
+		// method parameters are not currently supported
 		Code.put(0);
-		Code.put(0);
+		Code.put(0 + varCnt.getCount());
 	}
 	
 	public void visit(MethodDecl methodDecl) {
