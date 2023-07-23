@@ -119,6 +119,32 @@ public class SemanticPass extends VisitorAdaptor {
 		if (!sourceType.assignableTo(destinationType)) {
 			report_error("Not compatible types in assignment", assignment);
 		}
+		int destinationKind = assignment.getDesignator().obj.getKind() ;
+		if (destinationKind != Obj.Var) {
+			report_error("Operand is not a variable", assignment);
+		}
+	}
+	
+	public void visit(UPlusStatement uplus) {
+		Struct designatorType = uplus.getDesignator().obj.getType();
+		if (!designatorType.equals(Tab.intType)) {
+			report_operations_type_error(uplus);
+		}
+		int designatorKind = uplus.getDesignator().obj.getKind() ;
+		if (designatorKind != Obj.Var) {
+			report_error("Increment operand is not a variable", uplus);
+		}
+	}
+	
+	public void visit(UMinusStatement uminus) {
+		Struct designatorType = uminus.getDesignator().obj.getType();
+		if (!designatorType.equals(Tab.intType)) {
+			report_operations_type_error(uminus);
+		}
+		int designatorKind = uminus.getDesignator().obj.getKind() ;
+		if (designatorKind != Obj.Var) {
+			report_error("Decrement operand is not a variable", uminus);
+		}
 	}
 	
 	public void visit(Type type) {
@@ -186,6 +212,10 @@ public class SemanticPass extends VisitorAdaptor {
 	
 	public void visit(ConstFactor constFactor) {
 		constFactor.struct = constFactor.getConst().struct;
+	}
+	
+	public void visit(ParenFactor parenFactor) {
+		parenFactor.struct = parenFactor.getExpr().struct;
 	}
 	
 	public void visit(NumConst cnst) {

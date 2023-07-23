@@ -38,9 +38,9 @@ init with {:
 	errorDetected = false;
 :}
 
-terminal PROGRAM, LBRACE, RBRACE, SEMI, LPAREN, RPAREN, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, PRINT, VOID;
+terminal PROGRAM, LBRACE, RBRACE, CONST, SEMI, LPAREN, RPAREN, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, UPLUS, UMINUS, PRINT, VOID;
 /* only for lexer: */
-terminal IF, ELSE, BREAK, CLASS, WHILE, NEW, READ, CONST, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, UPLUS, UMINUS, COLON, DOT, LBRACKET, RBRACKET, ARROW;
+terminal IF, ELSE, BREAK, CLASS, WHILE, NEW, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, DOT, LBRACKET, RBRACKET, ARROW;
 terminal Integer BOOL;
 terminal Character CHAR;
 terminal Integer NUM;
@@ -54,10 +54,11 @@ nonterminal VarDeclList VarDeclList;
 nonterminal VarDecl VarDecl;
 nonterminal VarDeclNameList VarDeclNameList;
 nonterminal StatementList StatementList;
+nonterminal Statement Statement;
+nonterminal DesignatorStatement DesignatorStatement;
 nonterminal Assignop Assignop;
 nonterminal Mulop Mulop;
 nonterminal Addop Addop;
-nonterminal Statement Statement;
 nonterminal PrintParam PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
@@ -116,10 +117,17 @@ StatementList ::= (Statements) StatementList:S1 Statement:S2 {: RESULT=new State
 Statement ::= (ErrorStatement) error SEMI:k
 			{: parser.report_error("Error recovery until ; in line " + kleft, null); :} {: RESULT=new ErrorStatement(); :}
 			|
-			(Assignment) Designator:destination EQUALS Expr:source SEMI {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
+			(DesignatorSemiStatement) DesignatorStatement:D1 SEMI {: RESULT=new DesignatorSemiStatement(D1); RESULT.setLine(D1left); :}
 			|
 			(PrintStatement) PRINT LPAREN Expr:E1 PrintParam:P2 RPAREN SEMI {: RESULT=new PrintStatement(E1, P2); RESULT.setLine(E1left); :}
 			;
+
+DesignatorStatement ::= (Assignment) Designator:destination EQUALS Expr:source {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
+						|
+						(UPlusStatement) Designator:D1 UPLUS {: RESULT=new UPlusStatement(D1); RESULT.setLine(D1left); :}
+						|
+						(UMinusStatement) Designator:D1 UMINUS {: RESULT=new UMinusStatement(D1); RESULT.setLine(D1left); :}
+						;
 
 Expr ::= (AddopExpr) Expr:E1 Addop:A2 Term:T3 {: RESULT=new AddopExpr(E1, A2, T3); RESULT.setLine(E1left); :}
 		|
@@ -148,6 +156,8 @@ Mulop ::= (Mul) MUL {: RESULT=new Mul(); :}
 Factor ::= (DesignatorFactor) Designator:d {: RESULT=new DesignatorFactor(d); RESULT.setLine(dleft); :}
 			|
 			(ConstFactor) Const:c {: RESULT=new ConstFactor(c); RESULT.setLine(cleft); :}
+			|
+			(ParenFactor) LPAREN Expr:E1 RPAREN {: RESULT=new ParenFactor(E1); RESULT.setLine(E1left); :}
 			;
 
 Designator ::= (Designator) IDENT:name {: RESULT=new Designator(name); RESULT.setLine(nameleft); :};

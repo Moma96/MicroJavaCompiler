@@ -8,14 +8,18 @@ program MJProgram
 {
 	void main()
 	{
-		d = -5 * five;
+		d = -5 * (one + 4);
 		b = 240 + 10;
+		b++;
+		b++;
+		b--;
 			
 		// print test
 		print(boolConst);
 		print(charConst);
 		print(one, 2);
 		print(b / d / 2 - 3, 8);
-		print(d);
+		print(-b + (7 - 3*2));
+		print(b);
 	}
 }

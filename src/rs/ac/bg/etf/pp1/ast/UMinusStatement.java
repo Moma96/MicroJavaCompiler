@@ -5,11 +5,11 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorFactor extends Factor {
+public class UMinusStatement extends DesignatorStatement {
 
     private Designator Designator;
 
-    public DesignatorFactor (Designator Designator) {
+    public UMinusStatement (Designator Designator) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
     }
@@ -43,7 +43,7 @@ public class DesignatorFactor extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorFactor(\n");
+        buffer.append("UMinusStatement(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -52,7 +52,7 @@ public class DesignatorFactor extends Factor {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [DesignatorFactor]");
+        buffer.append(") [UMinusStatement]");
         return buffer.toString();
     }
 }

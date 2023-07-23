@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 23/6/2023 19:40:47
+// 23/6/2023 22:56:3
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Assignment extends Statement {
+public class Assignment extends DesignatorStatement {
 
     private Designator Designator;
     private Expr Expr;

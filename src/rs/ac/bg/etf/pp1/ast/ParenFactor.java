@@ -5,21 +5,21 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ExprNegTerm extends Expr {
+public class ParenFactor extends Factor {
 
-    private Term Term;
+    private Expr Expr;
 
-    public ExprNegTerm (Term Term) {
-        this.Term=Term;
-        if(Term!=null) Term.setParent(this);
+    public ParenFactor (Expr Expr) {
+        this.Expr=Expr;
+        if(Expr!=null) Expr.setParent(this);
     }
 
-    public Term getTerm() {
-        return Term;
+    public Expr getExpr() {
+        return Expr;
     }
 
-    public void setTerm(Term Term) {
-        this.Term=Term;
+    public void setExpr(Expr Expr) {
+        this.Expr=Expr;
     }
 
     public void accept(Visitor visitor) {
@@ -27,32 +27,32 @@ public class ExprNegTerm extends Expr {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Term!=null) Term.accept(visitor);
+        if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Term!=null) Term.traverseTopDown(visitor);
+        if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Term!=null) Term.traverseBottomUp(visitor);
+        if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ExprNegTerm(\n");
+        buffer.append("ParenFactor(\n");
 
-        if(Term!=null)
-            buffer.append(Term.toString("  "+tab));
+        if(Expr!=null)
+            buffer.append(Expr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ExprNegTerm]");
+        buffer.append(") [ParenFactor]");
         return buffer.toString();
     }
 }

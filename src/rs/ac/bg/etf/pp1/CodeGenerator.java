@@ -26,10 +26,13 @@ import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.PrintWidth;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
+import rs.ac.bg.etf.pp1.ast.UMinusStatement;
+import rs.ac.bg.etf.pp1.ast.UPlusStatement;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
 
 public class CodeGenerator extends VisitorAdaptor {
 	
@@ -63,6 +66,22 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public void visit(Assignment assignment) {
 		Code.store(assignment.getDesignator().obj);
+	}
+	
+	public void visit(UPlusStatement uplus) {
+		Obj designatorObj = uplus.getDesignator().obj;
+		Code.load(designatorObj);
+		Code.loadConst(1);
+		Code.put(Code.add);
+		Code.store(uplus.getDesignator().obj);
+	}
+	
+	public void visit(UMinusStatement minus) {
+		Obj designatorObj = minus.getDesignator().obj;
+		Code.load(designatorObj);
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		Code.store(minus.getDesignator().obj);
 	}
 	
 	//region PRINT
