@@ -11,6 +11,7 @@ import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorFactor;
 import rs.ac.bg.etf.pp1.ast.Div;
+import rs.ac.bg.etf.pp1.ast.ExprNegTerm;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
 import rs.ac.bg.etf.pp1.ast.Minus;
@@ -92,6 +93,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	//endregion PRINT
 	
+	//region Mathematical operations
+	
 	public void visit(AddopExpr addopExpr) {
 		Addop addop = addopExpr.getAddop();
 		if (addop instanceof Plus) {
@@ -99,6 +102,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		} else if (addop instanceof Minus) {
 			Code.put(Code.sub);
 		}
+	}
+	
+	public void visit(ExprNegTerm exprNegTerm) {
+		Code.put(Code.neg);
 	}
 	
 	public void visit(MulopTerm mulopTerm) {
@@ -111,6 +118,8 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.rem);
 		}
 	}
+	
+	//endregion Mathematical operations
 	
 	public void visit(NumConst cnst) {
 		Code.load(Utils.createGlobalConst(cnst.getN1(), cnst.struct));

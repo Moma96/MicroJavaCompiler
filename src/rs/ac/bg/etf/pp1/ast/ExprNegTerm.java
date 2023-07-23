@@ -5,20 +5,21 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class CharConst extends Const {
+public class ExprNegTerm extends Expr {
 
-    private Character C1;
+    private Term Term;
 
-    public CharConst (Character C1) {
-        this.C1=C1;
+    public ExprNegTerm (Term Term) {
+        this.Term=Term;
+        if(Term!=null) Term.setParent(this);
     }
 
-    public Character getC1() {
-        return C1;
+    public Term getTerm() {
+        return Term;
     }
 
-    public void setC1(Character C1) {
-        this.C1=C1;
+    public void setTerm(Term Term) {
+        this.Term=Term;
     }
 
     public void accept(Visitor visitor) {
@@ -26,26 +27,32 @@ public class CharConst extends Const {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Term!=null) Term.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Term!=null) Term.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Term!=null) Term.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("CharConst(\n");
+        buffer.append("ExprNegTerm(\n");
 
-        buffer.append(" "+tab+C1);
+        if(Term!=null)
+            buffer.append(Term.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [CharConst]");
+        buffer.append(") [ExprNegTerm]");
         return buffer.toString();
     }
 }

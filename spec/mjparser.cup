@@ -111,6 +111,8 @@ Statement ::= (ErrorStatement) error SEMI:k
 
 Expr ::= (AddopExpr) Expr Addop Term
 		|
+		(ExprNegTerm) MINUS Term
+		|
 		(ExprTerm) Term
 		;
 

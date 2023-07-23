@@ -8,7 +8,7 @@ program MJProgram
 {
 	void main()
 	{
-		d = 5 * five;
+		d = -5 * five;
 		b = 240 + 10;
 			
 		// print test

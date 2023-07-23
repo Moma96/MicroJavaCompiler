@@ -21,6 +21,10 @@ public class SemanticPass extends VisitorAdaptor {
 	
 	Logger log = Logger.getLogger(getClass());
 	
+	private void report_operations_type_error(SyntaxNode info) {
+		report_error("Math operations are supported only for Int types", info);
+	}
+	
 	private void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
 		StringBuilder msg = new StringBuilder("Semantic error: " + message);
@@ -140,10 +144,20 @@ public class SemanticPass extends VisitorAdaptor {
 		Struct exprType = addopExpr.getExpr().struct;
 		Struct termType = addopExpr.getTerm().struct;
 		if (!exprType.equals(termType) || !exprType.equals(Tab.intType)) {
-			report_error("Math operations are supported only for Int types", addopExpr);
+			report_operations_type_error(addopExpr);
 			addopExpr.struct = Tab.noType;
 		} else {
 			addopExpr.struct = exprType;
+		}
+	}
+	
+	public void visit(ExprNegTerm exprNegTerm) {
+		Struct termType = exprNegTerm.getTerm().struct;
+		if (!termType.equals(Tab.intType)) {
+			report_operations_type_error(exprNegTerm);
+			exprNegTerm.struct = Tab.noType;
+		} else {			
+			exprNegTerm.struct = termType;
 		}
 	}
 	
@@ -155,7 +169,7 @@ public class SemanticPass extends VisitorAdaptor {
 		Struct termType = mulopTerm.getTerm().struct;
 		Struct factorType = mulopTerm.getFactor().struct;
 		if (!termType.equals(factorType) || !termType.equals(Tab.intType)) {
-			report_error("Math operations are supported only for Int types", mulopTerm);
+			report_operations_type_error(mulopTerm);
 			mulopTerm.struct = Tab.noType;
 		} else {
 			mulopTerm.struct = termType;
