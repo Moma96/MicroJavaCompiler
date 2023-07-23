@@ -5,18 +5,18 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class VarDecl implements SyntaxNode {
+public class ConstDecl implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     private Type Type;
-    private VarDeclNameList VarDeclNameList;
+    private ConstAssignmentList ConstAssignmentList;
 
-    public VarDecl (Type Type, VarDeclNameList VarDeclNameList) {
+    public ConstDecl (Type Type, ConstAssignmentList ConstAssignmentList) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
-        this.VarDeclNameList=VarDeclNameList;
-        if(VarDeclNameList!=null) VarDeclNameList.setParent(this);
+        this.ConstAssignmentList=ConstAssignmentList;
+        if(ConstAssignmentList!=null) ConstAssignmentList.setParent(this);
     }
 
     public Type getType() {
@@ -27,12 +27,12 @@ public class VarDecl implements SyntaxNode {
         this.Type=Type;
     }
 
-    public VarDeclNameList getVarDeclNameList() {
-        return VarDeclNameList;
+    public ConstAssignmentList getConstAssignmentList() {
+        return ConstAssignmentList;
     }
 
-    public void setVarDeclNameList(VarDeclNameList VarDeclNameList) {
-        this.VarDeclNameList=VarDeclNameList;
+    public void setConstAssignmentList(ConstAssignmentList ConstAssignmentList) {
+        this.ConstAssignmentList=ConstAssignmentList;
     }
 
     public SyntaxNode getParent() {
@@ -57,25 +57,25 @@ public class VarDecl implements SyntaxNode {
 
     public void childrenAccept(Visitor visitor) {
         if(Type!=null) Type.accept(visitor);
-        if(VarDeclNameList!=null) VarDeclNameList.accept(visitor);
+        if(ConstAssignmentList!=null) ConstAssignmentList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Type!=null) Type.traverseTopDown(visitor);
-        if(VarDeclNameList!=null) VarDeclNameList.traverseTopDown(visitor);
+        if(ConstAssignmentList!=null) ConstAssignmentList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Type!=null) Type.traverseBottomUp(visitor);
-        if(VarDeclNameList!=null) VarDeclNameList.traverseBottomUp(visitor);
+        if(ConstAssignmentList!=null) ConstAssignmentList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("VarDecl(\n");
+        buffer.append("ConstDecl(\n");
 
         if(Type!=null)
             buffer.append(Type.toString("  "+tab));
@@ -83,14 +83,14 @@ public class VarDecl implements SyntaxNode {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(VarDeclNameList!=null)
-            buffer.append(VarDeclNameList.toString("  "+tab));
+        if(ConstAssignmentList!=null)
+            buffer.append(ConstAssignmentList.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [VarDecl]");
+        buffer.append(") [ConstDecl]");
         return buffer.toString();
     }
 }

@@ -14,6 +14,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private boolean errorDetected = false;
 	
 	private Obj currentMethod = null;
+	private List<ConstAssignment> currentConstAssignments = new ArrayList<ConstAssignment>();
 	private List<VarDeclName> currentVarDeclNames = new ArrayList<VarDeclName>();
 	
 	public int nProgramVars;
@@ -51,7 +52,7 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 	
 	public void visit(MethodTypeName methodTypeName) {
-		currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethName(), Tab.noType); // Currently are only void functions supported
+		currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethName(), Tab.noType); // Only void functions are currently supported
 		methodTypeName.obj = currentMethod;
 		Tab.openScope();
 		report_info("function '" + methodTypeName.getMethName() + "' processing started", methodTypeName);
@@ -65,6 +66,25 @@ public class SemanticPass extends VisitorAdaptor {
 		currentMethod = null;
 	}
 		
+	public void visit(ConstDecl constDecl) {
+		for(ConstAssignment constAssignment: currentConstAssignments) {
+			if (Tab.find(constAssignment.getConstName()) != Tab.noObj) {
+				report_error("Const '" + constAssignment.getConstName() + "' is already declared in current scope", constDecl);
+			} else if (!constAssignment.getConst().struct.assignableTo(constDecl.getType().struct)){
+				report_error("Const '" + constAssignment.getConstName() + "' type is not compatible with assigned value", constDecl);
+			} else {
+				report_info("Const declared '" + constAssignment.getConstName() + "'", constDecl);
+				int constValue = Utils.getConstValue(constAssignment.getConst());
+				constAssignment.obj = Utils.createGlobalNamedConst(constValue, constAssignment.getConstName(), constDecl.getType().struct);
+			}
+		}
+		currentConstAssignments.clear();
+	}
+	
+	public void visit(ConstAssignment constAssignment) {
+		currentConstAssignments.add(constAssignment);
+	}
+	
 	public void visit(VarDecl varDecl) {
 		for(VarDeclName varDeclName: currentVarDeclNames) {
 			if (Tab.find(varDeclName.getVarName()) != Tab.noObj) {
@@ -112,12 +132,16 @@ public class SemanticPass extends VisitorAdaptor {
 	
 	public void visit(PrintStatement print) {
 		Struct factorStruct = print.getFactor().struct;
-		if (!factorStruct.equals(Tab.intType) && !factorStruct.equals(Tab.charType) && !factorStruct.equals(Utils.boolType))
+		if (!Utils.isSympleType(factorStruct))
 			report_error("PRINT operand must be int, char or bool", print);
 	}
 
 	public void visit(Var var) {
 		var.struct = var.getDesignator().obj.getType();
+	}
+	
+	public void visit(ConstValue cnst) {
+		cnst.struct = cnst.getConst().struct;
 	}
 	
 	public void visit(NumConst cnst) {

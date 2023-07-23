@@ -43,7 +43,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public void visit(Designator designator) {
 		SyntaxNode parent = designator.getParent();
-		
+
 		if (Var.class == parent.getClass()) {
 			Code.load(designator.obj);
 		}
@@ -97,7 +97,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(MethodDecl methodDecl) {
-		// code for function exit
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}

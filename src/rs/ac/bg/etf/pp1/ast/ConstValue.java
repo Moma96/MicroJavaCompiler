@@ -5,21 +5,21 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Var extends Factor {
+public class ConstValue extends Factor {
 
-    private Designator Designator;
+    private Const Const;
 
-    public Var (Designator Designator) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public ConstValue (Const Const) {
+        this.Const=Const;
+        if(Const!=null) Const.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public Const getConst() {
+        return Const;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setConst(Const Const) {
+        this.Const=Const;
     }
 
     public void accept(Visitor visitor) {
@@ -27,32 +27,32 @@ public class Var extends Factor {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(Const!=null) Const.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(Const!=null) Const.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(Const!=null) Const.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Var(\n");
+        buffer.append("ConstValue(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(Const!=null)
+            buffer.append(Const.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Var]");
+        buffer.append(") [ConstValue]");
         return buffer.toString();
     }
 }

@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ErrorStatement extends Statement {
+public class NoConstDeclaration extends ConstDeclList {
 
-    public ErrorStatement () {
+    public NoConstDeclaration () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class ErrorStatement extends Statement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ErrorStatement(\n");
+        buffer.append("NoConstDeclaration(\n");
 
         buffer.append(tab);
-        buffer.append(") [ErrorStatement]");
+        buffer.append(") [NoConstDeclaration]");
         return buffer.toString();
     }
 }

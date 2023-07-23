@@ -1,17 +1,18 @@
 program MJProgram
-	bool a, b;
-	int d;
+
+	const bool boolConst = true;
+	const int one = 1, five = 5;
+	
+	int d, b;
 {
 	void main()
-		bool c;
 	{
-		a = true;
-		c = false;
-		b = c;
-		d = 44;
-		
+		d = 123;
+		b = five;
+			
 		// print test
-		print(a);
+		print(boolConst);
+		print(one);
 		print(b);
 		print(d);
 	}

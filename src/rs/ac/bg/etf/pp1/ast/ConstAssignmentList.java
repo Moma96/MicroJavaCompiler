@@ -5,7 +5,7 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class Assignop implements SyntaxNode {
+public abstract class ConstAssignmentList implements SyntaxNode {
 
     private SyntaxNode parent;
 

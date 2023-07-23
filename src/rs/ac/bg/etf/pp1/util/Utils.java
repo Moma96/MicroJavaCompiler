@@ -1,5 +1,9 @@
 package rs.ac.bg.etf.pp1.util;
 
+import rs.ac.bg.etf.pp1.ast.BoolConst;
+import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.Const;
+import rs.ac.bg.etf.pp1.ast.NumConst;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
@@ -20,10 +24,10 @@ public class Utils {
 	}
 	
 	public static void codeGeneratorInit() {
-		printBool();
+		printBoolInit();
 	}
 	
-	public static void printBool() {
+	public static void printBoolInit() {
 		_printBoolAdr = Code.pc;
 		Code.put(Code.enter);
 		Code.put(1);
@@ -50,6 +54,10 @@ public class Utils {
 		Code.put(Code.return_);
 	}
 	
+	public static boolean isSympleType(Struct struct) {
+		return struct.equals(Tab.intType) || struct.equals(Tab.charType) || struct.equals(Utils.boolType);
+	}
+	
 	public static void print(String value, int width) {
 		for(int i = 0; i < value.length(); i++) {
 			print(value.charAt(i), i == 0 ? 5 : 1);
@@ -62,8 +70,24 @@ public class Utils {
 		Code.put(Code.bprint);
 	}
 	
+	public static int getConstValue(Const const_) {
+		if (const_ instanceof NumConst) {
+			return ((NumConst)const_).getN1();
+		} else if (const_ instanceof CharConst) {
+			return ((CharConst)const_).getC1();
+		} else if (const_ instanceof BoolConst) {
+			return ((BoolConst)const_).getB1();
+		} else {
+			return 0;
+		}
+	}
+	
 	public static Obj createGlobalConst(int value, Struct struct) {
-		Obj con = Tab.insert(Obj.Con, "$", struct);
+		return createGlobalNamedConst(value, "$", struct);
+	}
+	
+	public static Obj createGlobalNamedConst(int value, String name, Struct struct) {
+		Obj con = Tab.insert(Obj.Con, name, struct);
 		
 		con.setLevel(0);
 		con.setAdr(value);

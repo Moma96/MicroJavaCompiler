@@ -46,14 +46,30 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, VarDeclList, VarDeclNameList, StatementList, VarDecl, Assignop, Statement;
+nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Assignop, Statement;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, MethodTypeName, Designator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Const;
 
-Program ::= (Program) PROGRAM ProgramName VarDeclList LBRACE MethodDeclList RBRACE;
+Program ::= (Program) PROGRAM ProgramName ConstDeclList VarDeclList LBRACE MethodDeclList RBRACE;
 
 ProgramName ::= (ProgramName) IDENT:name;
+
+
+ConstDeclList ::= (ConstDeclarations) ConstDeclList ConstDecl 
+			|
+			(NoConstDeclaration) /* epsilon */
+			;
+
+ConstDecl ::= (ConstDecl) CONST Type:varType ConstAssignmentList:constAssignments SEMI;
+
+ConstAssignmentList ::= (ConstAssignments) ConstAssignmentList COMMA ConstAssignment
+					|
+					(OneConstAssignment) ConstAssignment
+					;
+
+ConstAssignment ::= (ConstAssignment) IDENT:constName EQUALS Const:c;
+
 
 VarDeclList ::= (VarDeclarations) VarDeclList VarDecl 
 			|
@@ -62,14 +78,13 @@ VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
 
 VarDecl ::= (VarDecl) Type:varType VarDeclNameList:varNames SEMI;
 
-Type ::= (Type) IDENT:typeName;
-
-VarDeclNameList ::= (VarDeclNames) VarDeclNameList COMMA VarDeclName:varName
+VarDeclNameList ::= (VarDeclNames) VarDeclNameList COMMA VarDeclName
 					|
-					(OneVarDeclName) VarDeclName:varName
+					(OneVarDeclName) VarDeclName
 					;
 
 VarDeclName ::= (VarDeclName) IDENT:varName;				
+
 
 MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				|
@@ -79,7 +94,8 @@ MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 MethodDecl ::= (MethodDecl) VOID MethodTypeName LPAREN RPAREN VarDeclList LBRACE StatementList RBRACE;
 
 MethodTypeName ::= (MethodTypeName) IDENT:methName;
-		
+
+
 StatementList ::= (Statements) StatementList Statement
 				|
 				(NoStatement) /* epsilon */
@@ -88,20 +104,23 @@ StatementList ::= (Statements) StatementList Statement
 Statement ::= (ErrorStatement) error SEMI:k
 			{: parser.report_error("Error recovery until ; in line " + kleft, null); :}
 			|
-			(Assignment) Designator:dest Assignop Factor SEMI
+			(Assignment) Designator:destination EQUALS Factor:source SEMI
 			|
 			(PrintStatement) PRINT LPAREN Factor RPAREN SEMI
 			;
-		
+
 Factor ::= (Var) Designator:d
-		|
-		(NumConst) NUM
+			|
+			(ConstValue) Const:c
+			;
+
+Const ::= (NumConst) NUM
 		|
 		(CharConst) CHAR
 		|
 		(BoolConst) BOOL
 		;
 
-Designator ::= (Designator) IDENT:name;
+Type ::= (Type) IDENT:typeName;
 
-Assignop ::= (Assignop) EQUALS;
+Designator ::= (Designator) IDENT:name;
