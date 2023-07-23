@@ -30,16 +30,19 @@ public class Utils {
 	public static void printBoolInit() {
 		_printBoolAdr = Code.pc;
 		Code.put(Code.enter);
-		Code.put(1);
-		Code.put(1);
+		int numberOfArguments = 2;
+		Code.put(numberOfArguments);
+		Code.put(numberOfArguments);
 		
+		 // argument 1 - value
 		Code.put(Code.load_n);
+		
 		Code.loadConst(1);
 		Code.putFalseJump(0, 0);
 		int falsePatchAddress = Code.pc - 2;
 		
 		// value == 1
-		Utils.print("true", 5);
+		Utils.print("true");
 		
 		Code.putJump(0);
 		int exitPatchAddress = Code.pc - 2;
@@ -47,7 +50,7 @@ public class Utils {
 		Code.fixup(falsePatchAddress);
 		
 		// value == 0
-		Utils.print("false", 5);
+		Utils.print("false");
 		
 		Code.fixup(exitPatchAddress);
 		Code.put(Code.exit);
@@ -58,18 +61,19 @@ public class Utils {
 		return struct.equals(Tab.intType) || struct.equals(Tab.charType) || struct.equals(Utils.boolType);
 	}
 	
-	public static void print(String value, int width) {
+	public static void print(String value) {
 		for(int i = 0; i < value.length(); i++) {
-			print(value.charAt(i), i == 0 ? 5 : 1);
+			Code.load(createGlobalConst(value.charAt(i), Tab.charType));
+			if (i == 0) {
+				// initBool method argiment 2 - width
+				Code.put(Code.load_1);
+			} else {
+				Code.loadConst(1);
+			}
+			Code.put(Code.bprint);
 		}
 	}
 
-	public static void print(char value, int width) {
-		Code.load(createGlobalConst(value, null));
-		Code.loadConst(width);
-		Code.put(Code.bprint);
-	}
-	
 	public static int getConstValue(Const const_) {
 		if (const_ instanceof NumConst) {
 			return ((NumConst)const_).getN1();

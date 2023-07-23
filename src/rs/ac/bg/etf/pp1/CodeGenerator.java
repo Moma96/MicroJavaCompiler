@@ -54,11 +54,13 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(PrintStatement print) {
+		int defaultWidth = 5;
+		// first argument is already on estack - value
+		// load second argument - width
+		Code.loadConst(defaultWidth);
 		if (Tab.intType.equals(print.getFactor().struct)) {
-			Code.loadConst(5);
 			Code.put(Code.print);
 		} else if (Tab.charType.equals(print.getFactor().struct)) {
-			Code.loadConst(5);
 			Code.put(Code.bprint);
 		} else if (Utils.boolType.equals(print.getFactor().struct)) {
 			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
