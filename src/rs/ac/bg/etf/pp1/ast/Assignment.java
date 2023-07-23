@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 23/6/2023 16:33:57
+// 23/6/2023 18:34:52
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class Assignment extends Statement {
 
     private Designator Designator;
-    private Factor Factor;
+    private Term Term;
 
-    public Assignment (Designator Designator, Factor Factor) {
+    public Assignment (Designator Designator, Term Term) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
-        this.Factor=Factor;
-        if(Factor!=null) Factor.setParent(this);
+        this.Term=Term;
+        if(Term!=null) Term.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -25,12 +25,12 @@ public class Assignment extends Statement {
         this.Designator=Designator;
     }
 
-    public Factor getFactor() {
-        return Factor;
+    public Term getTerm() {
+        return Term;
     }
 
-    public void setFactor(Factor Factor) {
-        this.Factor=Factor;
+    public void setTerm(Term Term) {
+        this.Term=Term;
     }
 
     public void accept(Visitor visitor) {
@@ -39,18 +39,18 @@ public class Assignment extends Statement {
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
-        if(Factor!=null) Factor.accept(visitor);
+        if(Term!=null) Term.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
-        if(Factor!=null) Factor.traverseTopDown(visitor);
+        if(Term!=null) Term.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
-        if(Factor!=null) Factor.traverseBottomUp(visitor);
+        if(Term!=null) Term.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -65,8 +65,8 @@ public class Assignment extends Statement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(Factor!=null)
-            buffer.append(Factor.toString("  "+tab));
+        if(Term!=null)
+            buffer.append(Term.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

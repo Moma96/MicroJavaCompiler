@@ -110,9 +110,9 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 	
 	public void visit(Assignment assignment) {
-		Struct factorType = assignment.getFactor().struct;
+		Struct sourceType = assignment.getTerm().struct;
 		Struct destinationType = assignment.getDesignator().obj.getType();
-		if (!factorType.assignableTo(destinationType)) {
+		if (!sourceType.assignableTo(destinationType)) {
 			report_error("Not compatible types in assignment", assignment);
 		}
 	}
@@ -131,11 +131,26 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 	
 	public void visit(PrintStatement print) {
-		Struct factorStruct = print.getFactor().struct;
+		Struct factorStruct = print.getTerm().struct;
 		if (!Utils.isSympleType(factorStruct))
 			report_error("PRINT operand must be int, char or bool", print);
 	}
 
+	public void visit(MulopTerm mulopTerm) {
+		Struct termType = mulopTerm.getTerm().struct;
+		Struct factorType = mulopTerm.getFactor().struct;
+		if (!termType.equals(factorType) || !termType.equals(Tab.intType)) {
+			report_error("Math operations are supported only for Int types", mulopTerm);
+			mulopTerm.struct = Tab.noType;
+		} else {
+			mulopTerm.struct = termType;
+		}
+	}
+	
+	public void visit(TermFactor termFactor) {
+		termFactor.struct = termFactor.getFactor().struct;
+	}
+	
 	public void visit(DesignatorFactor designatorFactor) {
 		designatorFactor.struct = designatorFactor.getDesignator().obj.getType();
 	}

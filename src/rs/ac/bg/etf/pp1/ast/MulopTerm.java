@@ -5,16 +5,19 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class PrintStatement extends Statement {
+public class MulopTerm extends Term {
 
     private Term Term;
-    private PrintParam PrintParam;
+    private Mulop Mulop;
+    private Factor Factor;
 
-    public PrintStatement (Term Term, PrintParam PrintParam) {
+    public MulopTerm (Term Term, Mulop Mulop, Factor Factor) {
         this.Term=Term;
         if(Term!=null) Term.setParent(this);
-        this.PrintParam=PrintParam;
-        if(PrintParam!=null) PrintParam.setParent(this);
+        this.Mulop=Mulop;
+        if(Mulop!=null) Mulop.setParent(this);
+        this.Factor=Factor;
+        if(Factor!=null) Factor.setParent(this);
     }
 
     public Term getTerm() {
@@ -25,12 +28,20 @@ public class PrintStatement extends Statement {
         this.Term=Term;
     }
 
-    public PrintParam getPrintParam() {
-        return PrintParam;
+    public Mulop getMulop() {
+        return Mulop;
     }
 
-    public void setPrintParam(PrintParam PrintParam) {
-        this.PrintParam=PrintParam;
+    public void setMulop(Mulop Mulop) {
+        this.Mulop=Mulop;
+    }
+
+    public Factor getFactor() {
+        return Factor;
+    }
+
+    public void setFactor(Factor Factor) {
+        this.Factor=Factor;
     }
 
     public void accept(Visitor visitor) {
@@ -39,25 +50,28 @@ public class PrintStatement extends Statement {
 
     public void childrenAccept(Visitor visitor) {
         if(Term!=null) Term.accept(visitor);
-        if(PrintParam!=null) PrintParam.accept(visitor);
+        if(Mulop!=null) Mulop.accept(visitor);
+        if(Factor!=null) Factor.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Term!=null) Term.traverseTopDown(visitor);
-        if(PrintParam!=null) PrintParam.traverseTopDown(visitor);
+        if(Mulop!=null) Mulop.traverseTopDown(visitor);
+        if(Factor!=null) Factor.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Term!=null) Term.traverseBottomUp(visitor);
-        if(PrintParam!=null) PrintParam.traverseBottomUp(visitor);
+        if(Mulop!=null) Mulop.traverseBottomUp(visitor);
+        if(Factor!=null) Factor.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("PrintStatement(\n");
+        buffer.append("MulopTerm(\n");
 
         if(Term!=null)
             buffer.append(Term.toString("  "+tab));
@@ -65,14 +79,20 @@ public class PrintStatement extends Statement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(PrintParam!=null)
-            buffer.append(PrintParam.toString("  "+tab));
+        if(Mulop!=null)
+            buffer.append(Mulop.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(Factor!=null)
+            buffer.append(Factor.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [PrintStatement]");
+        buffer.append(") [MulopTerm]");
         return buffer.toString();
     }
 }

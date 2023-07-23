@@ -8,8 +8,13 @@ import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorFactor;
+import rs.ac.bg.etf.pp1.ast.Div;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
+import rs.ac.bg.etf.pp1.ast.Mod;
+import rs.ac.bg.etf.pp1.ast.Mul;
+import rs.ac.bg.etf.pp1.ast.Mulop;
+import rs.ac.bg.etf.pp1.ast.MulopTerm;
 import rs.ac.bg.etf.pp1.ast.NoPrintWidth;
 import rs.ac.bg.etf.pp1.ast.NumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
@@ -62,11 +67,11 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(PrintStatement print) {
 		// first argument is on estack - value
 		// second argument is on estack - width
-		if (Tab.intType.equals(print.getFactor().struct)) {
+		if (Tab.intType.equals(print.getTerm().struct)) {
 			Code.put(Code.print);
-		} else if (Tab.charType.equals(print.getFactor().struct)) {
+		} else if (Tab.charType.equals(print.getTerm().struct)) {
 			Code.put(Code.bprint);
-		} else if (Utils.boolType.equals(print.getFactor().struct)) {
+		} else if (Utils.boolType.equals(print.getTerm().struct)) {
 			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
 			Code.put(Code.call);
 			Code.put2(printBoolAdrOffset);
@@ -81,7 +86,18 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(DEFAULT_PRINT_WIDTH);
 	}
 	
-	//endregion
+	//endregion PRINT
+	
+	public void visit(MulopTerm mulopTerm) {
+		Mulop mulop = mulopTerm.getMulop();
+		if (mulop instanceof Mul) {
+			Code.put(Code.mul);
+		} else if (mulop instanceof Div) {
+			Code.put(Code.div);
+		} else if (mulop instanceof Mod) {
+			Code.put(Code.rem);
+		}
+	}
 	
 	public void visit(NumConst cnst) {
 		Code.load(Utils.createGlobalConst(cnst.getN1(), cnst.struct));

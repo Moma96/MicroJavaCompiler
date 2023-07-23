@@ -5,20 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class PrintWidth extends PrintParam {
+public class Div extends Mulop {
 
-    private Integer num;
-
-    public PrintWidth (Integer num) {
-        this.num=num;
-    }
-
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num=num;
+    public Div () {
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +28,10 @@ public class PrintWidth extends PrintParam {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("PrintWidth(\n");
-
-        buffer.append(" "+tab+num);
-        buffer.append("\n");
+        buffer.append("Div(\n");
 
         buffer.append(tab);
-        buffer.append(") [PrintWidth]");
+        buffer.append(") [Div]");
         return buffer.toString();
     }
 }

@@ -7,13 +7,13 @@ program MJProgram
 {
 	void main()
 	{
-		d = 123;
-		b = five;
+		d = 5 * five;
+		b = 250;
 			
 		// print test
 		print(boolConst);
 		print(one, 2);
-		print(b, 8);
+		print(b / d / 2, 8);
 		print(d);
 	}
 }

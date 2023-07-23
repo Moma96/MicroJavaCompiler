@@ -46,7 +46,7 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Assignop, Statement, PrintParam;
+nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Assignop, Mulop, Statement, PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Const;
@@ -104,10 +104,22 @@ StatementList ::= (Statements) StatementList Statement
 Statement ::= (ErrorStatement) error SEMI:k
 			{: parser.report_error("Error recovery until ; in line " + kleft, null); :}
 			|
-			(Assignment) Designator:destination EQUALS Factor:source SEMI
+			(Assignment) Designator:destination EQUALS Term:source SEMI
 			|
-			(PrintStatement) PRINT LPAREN Factor PrintParam RPAREN SEMI
+			(PrintStatement) PRINT LPAREN Term PrintParam RPAREN SEMI
 			;
+
+Term ::= (MulopTerm) Term Mulop Factor
+		|
+		(TermFactor) Factor
+		;
+
+Mulop ::= (Mul) MUL
+		|
+		(Div) DIV
+		|
+		(Mod) MOD
+		;
 
 Factor ::= (DesignatorFactor) Designator:d
 			|

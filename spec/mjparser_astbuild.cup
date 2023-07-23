@@ -55,6 +55,7 @@ nonterminal VarDecl VarDecl;
 nonterminal VarDeclNameList VarDeclNameList;
 nonterminal StatementList StatementList;
 nonterminal Assignop Assignop;
+nonterminal Mulop Mulop;
 nonterminal Statement Statement;
 nonterminal PrintParam PrintParam;
 
@@ -114,10 +115,22 @@ StatementList ::= (Statements) StatementList:S1 Statement:S2 {: RESULT=new State
 Statement ::= (ErrorStatement) error SEMI:k
 			{: parser.report_error("Error recovery until ; in line " + kleft, null); :} {: RESULT=new ErrorStatement(); :}
 			|
-			(Assignment) Designator:destination EQUALS Factor:source SEMI {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
+			(Assignment) Designator:destination EQUALS Term:source SEMI {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
 			|
-			(PrintStatement) PRINT LPAREN Factor:F1 PrintParam:P2 RPAREN SEMI {: RESULT=new PrintStatement(F1, P2); RESULT.setLine(F1left); :}
+			(PrintStatement) PRINT LPAREN Term:T1 PrintParam:P2 RPAREN SEMI {: RESULT=new PrintStatement(T1, P2); RESULT.setLine(T1left); :}
 			;
+
+Term ::= (MulopTerm) Term:T1 Mulop:M2 Factor:F3 {: RESULT=new MulopTerm(T1, M2, F3); RESULT.setLine(T1left); :}
+		|
+		(TermFactor) Factor:F1 {: RESULT=new TermFactor(F1); RESULT.setLine(F1left); :}
+		;
+
+Mulop ::= (Mul) MUL {: RESULT=new Mul(); :}
+		|
+		(Div) DIV {: RESULT=new Div(); :}
+		|
+		(Mod) MOD {: RESULT=new Mod(); :}
+		;
 
 Factor ::= (DesignatorFactor) Designator:d {: RESULT=new DesignatorFactor(d); RESULT.setLine(dleft); :}
 			|
