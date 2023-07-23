@@ -12,8 +12,8 @@ program MJProgram
 			
 		// print test
 		print(boolConst);
-		print(one);
-		print(b);
+		print(one, 2);
+		print(b, 8);
 		print(d);
 	}
 }

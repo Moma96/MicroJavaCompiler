@@ -5,20 +5,20 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NumConst extends Const {
+public class PrintWidth extends PrintParam {
 
-    private Integer N1;
+    private Integer num;
 
-    public NumConst (Integer N1) {
-        this.N1=N1;
+    public PrintWidth (Integer num) {
+        this.num=num;
     }
 
-    public Integer getN1() {
-        return N1;
+    public Integer getNum() {
+        return num;
     }
 
-    public void setN1(Integer N1) {
-        this.N1=N1;
+    public void setNum(Integer num) {
+        this.num=num;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +39,13 @@ public class NumConst extends Const {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NumConst(\n");
+        buffer.append("PrintWidth(\n");
 
-        buffer.append(" "+tab+N1);
+        buffer.append(" "+tab+num);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [NumConst]");
+        buffer.append(") [PrintWidth]");
         return buffer.toString();
     }
 }

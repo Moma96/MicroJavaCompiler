@@ -46,7 +46,7 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Assignop, Statement;
+nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Assignop, Statement, PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Const;
@@ -106,12 +106,19 @@ Statement ::= (ErrorStatement) error SEMI:k
 			|
 			(Assignment) Designator:destination EQUALS Factor:source SEMI
 			|
-			(PrintStatement) PRINT LPAREN Factor RPAREN SEMI
+			(PrintStatement) PRINT LPAREN Factor PrintParam RPAREN SEMI
 			;
 
 Factor ::= (Var) Designator:d
 			|
 			(ConstValue) Const:c
+			;
+
+Designator ::= (Designator) IDENT:name;
+
+PrintParam ::= (PrintWidth) COMMA NUM:num
+			|
+			(NoPrintWidth) /* epsilon */
 			;
 
 Const ::= (NumConst) NUM
@@ -122,5 +129,3 @@ Const ::= (NumConst) NUM
 		;
 
 Type ::= (Type) IDENT:typeName;
-
-Designator ::= (Designator) IDENT:name;

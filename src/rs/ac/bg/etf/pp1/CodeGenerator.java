@@ -9,8 +9,10 @@ import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
+import rs.ac.bg.etf.pp1.ast.NoPrintWidth;
 import rs.ac.bg.etf.pp1.ast.NumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
+import rs.ac.bg.etf.pp1.ast.PrintWidth;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.Var;
@@ -53,11 +55,13 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.store(assignment.getDesignator().obj);
 	}
 	
+	//region PRINT
+	
+	static int DEFAULT_PRINT_WIDTH = 5;
+	
 	public void visit(PrintStatement print) {
-		int defaultWidth = 5;
-		// first argument is already on estack - value
-		// load second argument - width
-		Code.loadConst(defaultWidth);
+		// first argument is on estack - value
+		// second argument is on estack - width
 		if (Tab.intType.equals(print.getFactor().struct)) {
 			Code.put(Code.print);
 		} else if (Tab.charType.equals(print.getFactor().struct)) {
@@ -68,6 +72,16 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put2(printBoolAdrOffset);
 		}
 	}
+	
+	public void visit(PrintWidth printWidth) {
+		Code.loadConst(printWidth.getNum());
+	}
+	
+	public void visit(NoPrintWidth noPrintWidth) {
+		Code.loadConst(DEFAULT_PRINT_WIDTH);
+	}
+	
+	//endregion
 	
 	public void visit(NumConst cnst) {
 		Code.load(Utils.createGlobalConst(cnst.getN1(), cnst.struct));

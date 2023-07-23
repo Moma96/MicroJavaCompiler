@@ -56,6 +56,7 @@ nonterminal VarDeclNameList VarDeclNameList;
 nonterminal StatementList StatementList;
 nonterminal Assignop Assignop;
 nonterminal Statement Statement;
+nonterminal PrintParam PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Const;
@@ -115,12 +116,19 @@ Statement ::= (ErrorStatement) error SEMI:k
 			|
 			(Assignment) Designator:destination EQUALS Factor:source SEMI {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
 			|
-			(PrintStatement) PRINT LPAREN Factor:F1 RPAREN SEMI {: RESULT=new PrintStatement(F1); RESULT.setLine(F1left); :}
+			(PrintStatement) PRINT LPAREN Factor:F1 PrintParam:P2 RPAREN SEMI {: RESULT=new PrintStatement(F1, P2); RESULT.setLine(F1left); :}
 			;
 
 Factor ::= (Var) Designator:d {: RESULT=new Var(d); RESULT.setLine(dleft); :}
 			|
 			(ConstValue) Const:c {: RESULT=new ConstValue(c); RESULT.setLine(cleft); :}
+			;
+
+Designator ::= (Designator) IDENT:name {: RESULT=new Designator(name); RESULT.setLine(nameleft); :};
+
+PrintParam ::= (PrintWidth) COMMA NUM:num {: RESULT=new PrintWidth(num); RESULT.setLine(numleft); :}
+			|
+			(NoPrintWidth) {: RESULT=new NoPrintWidth(); :} /* epsilon */
 			;
 
 Const ::= (NumConst) NUM:N1 {: RESULT=new NumConst(N1); RESULT.setLine(N1left); :}
@@ -131,5 +139,3 @@ Const ::= (NumConst) NUM:N1 {: RESULT=new NumConst(N1); RESULT.setLine(N1left); 
 		;
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
-
-Designator ::= (Designator) IDENT:name {: RESULT=new Designator(name); RESULT.setLine(nameleft); :};

@@ -5,7 +5,7 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ConstAssignmentList implements SyntaxNode {
+public abstract class PrintParam implements SyntaxNode {
 
     private SyntaxNode parent;
 
