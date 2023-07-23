@@ -8,7 +8,8 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.symboltable.Tab;
-import rs.etf.pp1.symboltable.concepts.*;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class SemanticPass extends VisitorAdaptor {
 	private boolean errorDetected = false;
@@ -125,25 +126,25 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 	
-	public void visit(UPlusStatement uplus) {
-		Struct designatorType = uplus.getDesignator().obj.getType();
+	public void visit(IncStatement inc) {
+		Struct designatorType = inc.getDesignator().obj.getType();
 		if (!designatorType.equals(Tab.intType)) {
-			report_operations_type_error(uplus);
+			report_operations_type_error(inc);
 		}
-		int designatorKind = uplus.getDesignator().obj.getKind() ;
+		int designatorKind = inc.getDesignator().obj.getKind() ;
 		if (designatorKind != Obj.Var) {
-			report_error("Increment operand is not a variable", uplus);
+			report_error("Increment operand is not a variable", inc);
 		}
 	}
 	
-	public void visit(UMinusStatement uminus) {
-		Struct designatorType = uminus.getDesignator().obj.getType();
+	public void visit(DecStatement dec) {
+		Struct designatorType = dec.getDesignator().obj.getType();
 		if (!designatorType.equals(Tab.intType)) {
-			report_operations_type_error(uminus);
+			report_operations_type_error(dec);
 		}
-		int designatorKind = uminus.getDesignator().obj.getKind() ;
+		int designatorKind = dec.getDesignator().obj.getKind() ;
 		if (designatorKind != Obj.Var) {
-			report_error("Decrement operand is not a variable", uminus);
+			report_error("Decrement operand is not a variable", dec);
 		}
 	}
 	

@@ -3,32 +3,7 @@ package rs.ac.bg.etf.pp1;
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
-import rs.ac.bg.etf.pp1.ast.Addop;
-import rs.ac.bg.etf.pp1.ast.AddopExpr;
-import rs.ac.bg.etf.pp1.ast.Assignment;
-import rs.ac.bg.etf.pp1.ast.BoolConst;
-import rs.ac.bg.etf.pp1.ast.CharConst;
-import rs.ac.bg.etf.pp1.ast.Designator;
-import rs.ac.bg.etf.pp1.ast.DesignatorFactor;
-import rs.ac.bg.etf.pp1.ast.Div;
-import rs.ac.bg.etf.pp1.ast.ExprNegTerm;
-import rs.ac.bg.etf.pp1.ast.MethodDecl;
-import rs.ac.bg.etf.pp1.ast.MethodTypeName;
-import rs.ac.bg.etf.pp1.ast.Minus;
-import rs.ac.bg.etf.pp1.ast.Mod;
-import rs.ac.bg.etf.pp1.ast.Mul;
-import rs.ac.bg.etf.pp1.ast.Mulop;
-import rs.ac.bg.etf.pp1.ast.MulopTerm;
-import rs.ac.bg.etf.pp1.ast.NoPrintWidth;
-import rs.ac.bg.etf.pp1.ast.NumConst;
-import rs.ac.bg.etf.pp1.ast.Plus;
-import rs.ac.bg.etf.pp1.ast.PrintStatement;
-import rs.ac.bg.etf.pp1.ast.PrintWidth;
-import rs.ac.bg.etf.pp1.ast.ProgramName;
-import rs.ac.bg.etf.pp1.ast.SyntaxNode;
-import rs.ac.bg.etf.pp1.ast.UMinusStatement;
-import rs.ac.bg.etf.pp1.ast.UPlusStatement;
-import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
+import rs.ac.bg.etf.pp1.ast.*;
 import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
@@ -68,20 +43,20 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.store(assignment.getDesignator().obj);
 	}
 	
-	public void visit(UPlusStatement uplus) {
-		Obj designatorObj = uplus.getDesignator().obj;
+	public void visit(IncStatement inc) {
+		Obj designatorObj = inc.getDesignator().obj;
 		Code.load(designatorObj);
 		Code.loadConst(1);
 		Code.put(Code.add);
-		Code.store(uplus.getDesignator().obj);
+		Code.store(inc.getDesignator().obj);
 	}
 	
-	public void visit(UMinusStatement minus) {
-		Obj designatorObj = minus.getDesignator().obj;
+	public void visit(DecStatement dec) {
+		Obj designatorObj = dec.getDesignator().obj;
 		Code.load(designatorObj);
 		Code.loadConst(1);
 		Code.put(Code.sub);
-		Code.store(minus.getDesignator().obj);
+		Code.store(dec.getDesignator().obj);
 	}
 	
 	//region PRINT
