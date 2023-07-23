@@ -136,12 +136,12 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("PRINT operand must be int, char or bool", print);
 	}
 
-	public void visit(Var var) {
-		var.struct = var.getDesignator().obj.getType();
+	public void visit(DesignatorFactor designatorFactor) {
+		designatorFactor.struct = designatorFactor.getDesignator().obj.getType();
 	}
 	
-	public void visit(ConstValue cnst) {
-		cnst.struct = cnst.getConst().struct;
+	public void visit(ConstFactor constFactor) {
+		constFactor.struct = constFactor.getConst().struct;
 	}
 	
 	public void visit(NumConst cnst) {

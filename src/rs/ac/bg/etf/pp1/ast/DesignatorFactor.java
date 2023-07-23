@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 23/6/2023 15:52:33
+// 23/6/2023 16:33:57
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Var extends Factor {
+public class DesignatorFactor extends Factor {
 
     private Designator Designator;
 
-    public Var (Designator Designator) {
+    public DesignatorFactor (Designator Designator) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
     }
@@ -43,7 +43,7 @@ public class Var extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Var(\n");
+        buffer.append("DesignatorFactor(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -52,7 +52,7 @@ public class Var extends Factor {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Var]");
+        buffer.append(") [DesignatorFactor]");
         return buffer.toString();
     }
 }

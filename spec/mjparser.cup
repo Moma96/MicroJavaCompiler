@@ -109,9 +109,9 @@ Statement ::= (ErrorStatement) error SEMI:k
 			(PrintStatement) PRINT LPAREN Factor PrintParam RPAREN SEMI
 			;
 
-Factor ::= (Var) Designator:d
+Factor ::= (DesignatorFactor) Designator:d
 			|
-			(ConstValue) Const:c
+			(ConstFactor) Const:c
 			;
 
 Designator ::= (Designator) IDENT:name;

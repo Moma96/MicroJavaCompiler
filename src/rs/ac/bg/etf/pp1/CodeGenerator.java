@@ -7,6 +7,7 @@ import rs.ac.bg.etf.pp1.ast.Assignment;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
+import rs.ac.bg.etf.pp1.ast.DesignatorFactor;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
 import rs.ac.bg.etf.pp1.ast.NoPrintWidth;
@@ -15,7 +16,6 @@ import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.PrintWidth;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
-import rs.ac.bg.etf.pp1.ast.Var;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.mj.runtime.Code;
@@ -46,7 +46,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(Designator designator) {
 		SyntaxNode parent = designator.getParent();
 
-		if (Var.class == parent.getClass()) {
+		if (DesignatorFactor.class == parent.getClass()) {
 			Code.load(designator.obj);
 		}
 	}

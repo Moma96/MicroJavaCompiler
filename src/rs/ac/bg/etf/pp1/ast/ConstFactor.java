@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 23/6/2023 15:52:33
+// 23/6/2023 16:33:57
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ConstValue extends Factor {
+public class ConstFactor extends Factor {
 
     private Const Const;
 
-    public ConstValue (Const Const) {
+    public ConstFactor (Const Const) {
         this.Const=Const;
         if(Const!=null) Const.setParent(this);
     }
@@ -43,7 +43,7 @@ public class ConstValue extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ConstValue(\n");
+        buffer.append("ConstFactor(\n");
 
         if(Const!=null)
             buffer.append(Const.toString("  "+tab));
@@ -52,7 +52,7 @@ public class ConstValue extends Factor {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ConstValue]");
+        buffer.append(") [ConstFactor]");
         return buffer.toString();
     }
 }
