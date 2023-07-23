@@ -1,6 +1,7 @@
 program MJProgram
 
 	const bool boolConst = true;
+	const char charConst = 'a';
 	const int one = 1, five = 5;
 	
 	int d, b;
@@ -8,12 +9,13 @@ program MJProgram
 	void main()
 	{
 		d = 5 * five;
-		b = 250;
+		b = 240 + 10;
 			
 		// print test
 		print(boolConst);
+		print(charConst);
 		print(one, 2);
-		print(b / d / 2, 8);
+		print(b / d / 2 - 3, 8);
 		print(d);
 	}
 }

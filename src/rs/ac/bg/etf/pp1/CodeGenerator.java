@@ -3,6 +3,8 @@ package rs.ac.bg.etf.pp1;
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.Addop;
+import rs.ac.bg.etf.pp1.ast.AddopExpr;
 import rs.ac.bg.etf.pp1.ast.Assignment;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
@@ -11,12 +13,14 @@ import rs.ac.bg.etf.pp1.ast.DesignatorFactor;
 import rs.ac.bg.etf.pp1.ast.Div;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeName;
+import rs.ac.bg.etf.pp1.ast.Minus;
 import rs.ac.bg.etf.pp1.ast.Mod;
 import rs.ac.bg.etf.pp1.ast.Mul;
 import rs.ac.bg.etf.pp1.ast.Mulop;
 import rs.ac.bg.etf.pp1.ast.MulopTerm;
 import rs.ac.bg.etf.pp1.ast.NoPrintWidth;
 import rs.ac.bg.etf.pp1.ast.NumConst;
+import rs.ac.bg.etf.pp1.ast.Plus;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.PrintWidth;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
@@ -67,11 +71,11 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(PrintStatement print) {
 		// first argument is on estack - value
 		// second argument is on estack - width
-		if (Tab.intType.equals(print.getTerm().struct)) {
+		if (Tab.intType.equals(print.getExpr().struct)) {
 			Code.put(Code.print);
-		} else if (Tab.charType.equals(print.getTerm().struct)) {
+		} else if (Tab.charType.equals(print.getExpr().struct)) {
 			Code.put(Code.bprint);
-		} else if (Utils.boolType.equals(print.getTerm().struct)) {
+		} else if (Utils.boolType.equals(print.getExpr().struct)) {
 			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
 			Code.put(Code.call);
 			Code.put2(printBoolAdrOffset);
@@ -87,6 +91,15 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	//endregion PRINT
+	
+	public void visit(AddopExpr addopExpr) {
+		Addop addop = addopExpr.getAddop();
+		if (addop instanceof Plus) {
+			Code.put(Code.add);
+		} else if (addop instanceof Minus) {
+			Code.put(Code.sub);
+		}
+	}
 	
 	public void visit(MulopTerm mulopTerm) {
 		Mulop mulop = mulopTerm.getMulop();

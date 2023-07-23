@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoMethodDeclarations extends MethodDeclList {
+public class Minus extends Addop {
 
-    public NoMethodDeclarations () {
+    public Minus () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoMethodDeclarations extends MethodDeclList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoMethodDeclarations(\n");
+        buffer.append("Minus(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoMethodDeclarations]");
+        buffer.append(") [Minus]");
         return buffer.toString();
     }
 }
