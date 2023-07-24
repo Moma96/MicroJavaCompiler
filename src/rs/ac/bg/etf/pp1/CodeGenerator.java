@@ -8,6 +8,7 @@ import rs.ac.bg.etf.pp1.util.Utils;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class CodeGenerator extends VisitorAdaptor {
 	
@@ -40,7 +41,17 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(Assignment assignment) {
-		Code.store(assignment.getDesignator().obj);
+		Struct sourceType = assignment.getExpr().struct;
+		if (sourceType.getKind() == Struct.Array) {
+			Code.put(Code.newarray);
+			if (sourceType.getElemType() == Tab.charType) {
+				Code.put(0);
+			} else {
+				Code.put(1);
+			}
+		} else {			
+			Code.store(assignment.getDesignator().obj);
+		}
 	}
 	
 	public void visit(IncStatement inc) {

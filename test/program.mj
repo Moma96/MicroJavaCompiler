@@ -4,10 +4,13 @@ program MJProgram
 	const char charConst = 'a';
 	const int one = 1, five = 5;
 	
-	int d, b;
+	int d, b, array[];
+	char charArray[];
 {
 	void main()
 	{
+		array = new int[5];
+		charArray = new char[2];
 		d = -5 * (one + 4);
 		b = 240 + 10;
 		b++;

@@ -38,15 +38,15 @@ init with {:
 	errorDetected = false;
 :}
 
-terminal PROGRAM, LBRACE, RBRACE, CONST, SEMI, LPAREN, RPAREN, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID;
+terminal PROGRAM, CONST, SEMI, LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID, NEW;
 /* only for lexer: */
-terminal IF, ELSE, BREAK, CLASS, WHILE, NEW, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, DOT, LBRACKET, RBRACKET, ARROW;
+terminal IF, ELSE, BREAK, CLASS, WHILE, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, DOT, ARROW;
 terminal Integer BOOL;
 terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, StatementList, Statement, DesignatorStatement, Assignop, Mulop, Addop, PrintParam;
+nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, VarDeclKind, StatementList, Statement, DesignatorStatement, Assignop, Mulop, Addop, PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, Const;
@@ -83,7 +83,12 @@ VarDeclNameList ::= (VarDeclNames) VarDeclNameList COMMA VarDeclName
 					(OneVarDeclName) VarDeclName
 					;
 
-VarDeclName ::= (VarDeclName) IDENT:varName;				
+VarDeclName ::= (VarDeclName) IDENT:varName VarDeclKind:kind;
+
+VarDeclKind ::= (ArrayVarDeclType) LBRACKET RBRACKET
+				|
+				(SimpleVarDeclType)	/* epsilon */
+				;	
 
 
 MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
@@ -145,6 +150,8 @@ Factor ::= (DesignatorFactor) Designator:d
 			(ConstFactor) Const:c
 			|
 			(ParenFactor) LPAREN Expr RPAREN
+			|
+			(ArrayFactor) NEW Type LBRACKET Expr RBRACKET
 			;
 
 Designator ::= (Designator) IDENT:name;

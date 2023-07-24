@@ -13,6 +13,12 @@ public class Utils {
 	
 	public static final Struct boolType = new Struct(Struct.Bool);
 	
+	public static Struct arrayType(Struct elemType) {
+		Struct arrayType = new Struct(Struct.Array);
+		arrayType.setElementType(elemType);
+		return arrayType;
+	}
+	
 	private static int _printBoolAdr;
 	public static int getPrintBoolAdr() {
 		return _printBoolAdr;

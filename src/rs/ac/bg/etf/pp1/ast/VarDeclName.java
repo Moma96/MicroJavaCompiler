@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 23/6/2023 23:19:35
+// 25/6/2023 0:18:47
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -12,9 +12,12 @@ public class VarDeclName implements SyntaxNode {
     public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     private String varName;
+    private VarDeclKind VarDeclKind;
 
-    public VarDeclName (String varName) {
+    public VarDeclName (String varName, VarDeclKind VarDeclKind) {
         this.varName=varName;
+        this.VarDeclKind=VarDeclKind;
+        if(VarDeclKind!=null) VarDeclKind.setParent(this);
     }
 
     public String getVarName() {
@@ -23,6 +26,14 @@ public class VarDeclName implements SyntaxNode {
 
     public void setVarName(String varName) {
         this.varName=varName;
+    }
+
+    public VarDeclKind getVarDeclKind() {
+        return VarDeclKind;
+    }
+
+    public void setVarDeclKind(VarDeclKind VarDeclKind) {
+        this.VarDeclKind=VarDeclKind;
     }
 
     public SyntaxNode getParent() {
@@ -46,13 +57,16 @@ public class VarDeclName implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(VarDeclKind!=null) VarDeclKind.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(VarDeclKind!=null) VarDeclKind.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(VarDeclKind!=null) VarDeclKind.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -62,6 +76,12 @@ public class VarDeclName implements SyntaxNode {
         buffer.append("VarDeclName(\n");
 
         buffer.append(" "+tab+varName);
+        buffer.append("\n");
+
+        if(VarDeclKind!=null)
+            buffer.append(VarDeclKind.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);

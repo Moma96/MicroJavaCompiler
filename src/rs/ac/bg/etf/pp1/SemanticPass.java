@@ -95,8 +95,17 @@ public class SemanticPass extends VisitorAdaptor {
 			if (Tab.find(varDeclName.getVarName()) != Tab.noObj) {
 				report_error("Var '" + varDeclName.getVarName() + "' is already declared in current scope", varDecl);
 			} else {
-				report_info("Var declared '" + varDeclName.getVarName() + "'", varDecl);
-				Tab.insert(Obj.Var, varDeclName.getVarName(), varDecl.getType().struct);	
+				if (varDeclName.getVarDeclKind() instanceof SimpleVarDeclType) {
+					Tab.insert(Obj.Var, varDeclName.getVarName(), varDecl.getType().struct);
+					report_info("Var declared '" + varDeclName.getVarName() + "'", varDecl);
+				} else if (varDeclName.getVarDeclKind() instanceof ArrayVarDeclType) {
+					Struct elemType = varDecl.getType().struct;
+					Struct arrayType = Utils.arrayType(elemType);
+					Tab.insert(Obj.Var, varDeclName.getVarName(), arrayType);
+					report_info("Array declared '" + varDeclName.getVarName() + "'", varDecl);
+				} else {
+					report_error("Unrecognized var declaration kind", varDecl);
+				}
 			}
 		}
 		currentVarDeclNames.clear();
@@ -217,6 +226,13 @@ public class SemanticPass extends VisitorAdaptor {
 	
 	public void visit(ParenFactor parenFactor) {
 		parenFactor.struct = parenFactor.getExpr().struct;
+	}
+	
+	public void visit(ArrayFactor arrayFactor) {
+		if (!arrayFactor.getExpr().struct.equals(Tab.intType)) {
+			report_error("Array length must be Int type", arrayFactor);
+		}
+		arrayFactor.struct = Utils.arrayType(arrayFactor.getType().struct);
 	}
 	
 	public void visit(NumConst cnst) {

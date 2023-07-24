@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoStatement extends StatementList {
+public class ArrayVarDeclType extends VarDeclKind {
 
-    public NoStatement () {
+    public ArrayVarDeclType () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoStatement extends StatementList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoStatement(\n");
+        buffer.append("ArrayVarDeclType(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoStatement]");
+        buffer.append(") [ArrayVarDeclType]");
         return buffer.toString();
     }
 }
