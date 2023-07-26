@@ -54,6 +54,7 @@ nonterminal VarDeclList VarDeclList;
 nonterminal VarDecl VarDecl;
 nonterminal VarDeclNameList VarDeclNameList;
 nonterminal VarDeclKind VarDeclKind;
+nonterminal DesignatorKind DesignatorKind;
 nonterminal StatementList StatementList;
 nonterminal Statement Statement;
 nonterminal DesignatorStatement DesignatorStatement;
@@ -62,7 +63,7 @@ nonterminal Mulop Mulop;
 nonterminal Addop Addop;
 nonterminal PrintParam PrintParam;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator, ElemDesignKindFirstNode;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, Const;
 
 Program ::= (Program) PROGRAM ProgramName:P1 ConstDeclList:C2 VarDeclList:V3 LBRACE MethodDeclList:M4 RBRACE {: RESULT=new Program(P1, C2, V3, M4); RESULT.setLine(P1left); :};
@@ -99,9 +100,9 @@ VarDeclNameList ::= (VarDeclNames) VarDeclNameList:V1 COMMA VarDeclName:V2 {: RE
 
 VarDeclName ::= (VarDeclName) IDENT:varName VarDeclKind:kind {: RESULT=new VarDeclName(varName, kind); RESULT.setLine(varNameleft); :};
 
-VarDeclKind ::= (ArrayVarDeclType) LBRACKET RBRACKET {: RESULT=new ArrayVarDeclType(); :}
+VarDeclKind ::= (ArrayVarDeclKind) LBRACKET RBRACKET {: RESULT=new ArrayVarDeclKind(); :}
 				|
-				(SimpleVarDeclType) {: RESULT=new SimpleVarDeclType(); :}	/* epsilon */
+				(SimpleVarDeclKind) {: RESULT=new SimpleVarDeclKind(); :}	/* epsilon */
 				;	
 
 
@@ -168,7 +169,14 @@ Factor ::= (DesignatorFactor) Designator:d {: RESULT=new DesignatorFactor(d); RE
 			(ArrayFactor) NEW Type:T1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ArrayFactor(T1, E2); RESULT.setLine(T1left); :}
 			;
 
-Designator ::= (Designator) IDENT:name {: RESULT=new Designator(name); RESULT.setLine(nameleft); :};
+Designator ::= (Designator) IDENT:name DesignatorKind:type {: RESULT=new Designator(name, type); RESULT.setLine(nameleft); :};
+
+DesignatorKind ::= (ElemDesignatorKind) ElemDesignKindFirstNode:E1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ElemDesignatorKind(E1, E2); RESULT.setLine(E1left); :}
+					|
+					(SimpleDesignatorKind) {: RESULT=new SimpleDesignatorKind(); :} /* epsilon */
+					;
+
+ElemDesignKindFirstNode ::= (ElemDesignKindFirstNode) {: RESULT=new ElemDesignKindFirstNode(); :}; /* epsilon */
 
 PrintParam ::= (PrintWidth) COMMA NUM:num {: RESULT=new PrintWidth(num); RESULT.setLine(numleft); :}
 			|

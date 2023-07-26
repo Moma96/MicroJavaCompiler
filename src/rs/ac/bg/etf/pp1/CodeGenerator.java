@@ -34,10 +34,16 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public void visit(Designator designator) {
 		SyntaxNode parent = designator.getParent();
-
+		
 		if (DesignatorFactor.class == parent.getClass()) {
+			// Designator is right-hand side operand
 			Code.load(designator.obj);
 		}
+	}
+	
+	public void visit(ElemDesignKindFirstNode firstNode) {
+		// put array address before index
+		Code.load(firstNode.obj);
 	}
 	
 	public void visit(Assignment assignment) {
@@ -49,13 +55,16 @@ public class CodeGenerator extends VisitorAdaptor {
 			} else {
 				Code.put(1);
 			}
-		} else {			
-			Code.store(assignment.getDesignator().obj);
 		}
+		Code.store(assignment.getDesignator().obj);
 	}
 	
 	public void visit(IncStatement inc) {
 		Obj designatorObj = inc.getDesignator().obj;
+		if (inc.getDesignator().getDesignatorKind() instanceof ElemDesignatorKind) {
+			// Double adr and index so load and store have enough to consume
+			Code.put(Code.dup2);
+		}
 		Code.load(designatorObj);
 		Code.loadConst(1);
 		Code.put(Code.add);
@@ -64,6 +73,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public void visit(DecStatement dec) {
 		Obj designatorObj = dec.getDesignator().obj;
+		if (dec.getDesignator().getDesignatorKind() instanceof ElemDesignatorKind) {
+			// Double adr and index so load and store have enough to consume
+			Code.put(Code.dup2);
+		}
 		Code.load(designatorObj);
 		Code.loadConst(1);
 		Code.put(Code.sub);

@@ -46,9 +46,9 @@ terminal Character CHAR;
 terminal Integer NUM;
 terminal String IDENT;
 
-nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, VarDeclKind, StatementList, Statement, DesignatorStatement, Assignop, Mulop, Addop, PrintParam;
+nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, VarDeclKind, DesignatorKind, StatementList, Statement, DesignatorStatement, Assignop, Mulop, Addop, PrintParam;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator, ElemDesignKindFirstNode;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, Const;
 
 Program ::= (Program) PROGRAM ProgramName ConstDeclList VarDeclList LBRACE MethodDeclList RBRACE;
@@ -85,9 +85,9 @@ VarDeclNameList ::= (VarDeclNames) VarDeclNameList COMMA VarDeclName
 
 VarDeclName ::= (VarDeclName) IDENT:varName VarDeclKind:kind;
 
-VarDeclKind ::= (ArrayVarDeclType) LBRACKET RBRACKET
+VarDeclKind ::= (ArrayVarDeclKind) LBRACKET RBRACKET
 				|
-				(SimpleVarDeclType)	/* epsilon */
+				(SimpleVarDeclKind)	/* epsilon */
 				;	
 
 
@@ -154,7 +154,14 @@ Factor ::= (DesignatorFactor) Designator:d
 			(ArrayFactor) NEW Type LBRACKET Expr RBRACKET
 			;
 
-Designator ::= (Designator) IDENT:name;
+Designator ::= (Designator) IDENT:name DesignatorKind:type;
+
+DesignatorKind ::= (ElemDesignatorKind) ElemDesignKindFirstNode LBRACKET Expr RBRACKET
+					|
+					(SimpleDesignatorKind) /* epsilon */
+					;
+
+ElemDesignKindFirstNode ::= (ElemDesignKindFirstNode); /* epsilon */
 
 PrintParam ::= (PrintWidth) COMMA NUM:num
 			|

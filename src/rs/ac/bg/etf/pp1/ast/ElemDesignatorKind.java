@@ -5,24 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Assignment extends DesignatorStatement {
+public class ElemDesignatorKind extends DesignatorKind {
 
-    private Designator Designator;
+    private ElemDesignKindFirstNode ElemDesignKindFirstNode;
     private Expr Expr;
 
-    public Assignment (Designator Designator, Expr Expr) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public ElemDesignatorKind (ElemDesignKindFirstNode ElemDesignKindFirstNode, Expr Expr) {
+        this.ElemDesignKindFirstNode=ElemDesignKindFirstNode;
+        if(ElemDesignKindFirstNode!=null) ElemDesignKindFirstNode.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public ElemDesignKindFirstNode getElemDesignKindFirstNode() {
+        return ElemDesignKindFirstNode;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setElemDesignKindFirstNode(ElemDesignKindFirstNode ElemDesignKindFirstNode) {
+        this.ElemDesignKindFirstNode=ElemDesignKindFirstNode;
     }
 
     public Expr getExpr() {
@@ -38,18 +38,18 @@ public class Assignment extends DesignatorStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(ElemDesignKindFirstNode!=null) ElemDesignKindFirstNode.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(ElemDesignKindFirstNode!=null) ElemDesignKindFirstNode.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(ElemDesignKindFirstNode!=null) ElemDesignKindFirstNode.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -57,10 +57,10 @@ public class Assignment extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Assignment(\n");
+        buffer.append("ElemDesignatorKind(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(ElemDesignKindFirstNode!=null)
+            buffer.append(ElemDesignKindFirstNode.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
@@ -72,7 +72,7 @@ public class Assignment extends DesignatorStatement {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Assignment]");
+        buffer.append(") [ElemDesignatorKind]");
         return buffer.toString();
     }
 }

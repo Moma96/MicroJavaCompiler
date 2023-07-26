@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.ac.bg.etf.pp1.util.Utils;
+import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
@@ -95,10 +96,10 @@ public class SemanticPass extends VisitorAdaptor {
 			if (Tab.find(varDeclName.getVarName()) != Tab.noObj) {
 				report_error("Var '" + varDeclName.getVarName() + "' is already declared in current scope", varDecl);
 			} else {
-				if (varDeclName.getVarDeclKind() instanceof SimpleVarDeclType) {
+				if (varDeclName.getVarDeclKind() instanceof SimpleVarDeclKind) {
 					Tab.insert(Obj.Var, varDeclName.getVarName(), varDecl.getType().struct);
 					report_info("Var declared '" + varDeclName.getVarName() + "'", varDecl);
-				} else if (varDeclName.getVarDeclKind() instanceof ArrayVarDeclType) {
+				} else if (varDeclName.getVarDeclKind() instanceof ArrayVarDeclKind) {
 					Struct elemType = varDecl.getType().struct;
 					Struct arrayType = Utils.arrayType(elemType);
 					Tab.insert(Obj.Var, varDeclName.getVarName(), arrayType);
@@ -119,9 +120,28 @@ public class SemanticPass extends VisitorAdaptor {
 		Obj obj = Tab.find(designator.getName());
 		if (obj == Tab.noObj) {
 			report_error("Name " + designator.getName() + " is not declared", designator);
+			designator.obj = Tab.noObj;
 		}
-		designator.obj = obj;
+		if (designator.getDesignatorKind() instanceof ElemDesignatorKind) {
+			ElemDesignatorKind elemDesignatorKind = (ElemDesignatorKind)designator.getDesignatorKind();
+			if (!elemDesignatorKind.getExpr().struct.equals(Tab.intType)) {
+				report_error("Array index must be Int type", designator);
+				designator.obj = Tab.noObj;
+				return;
+			} else {
+				designator.obj = new Obj(Obj.Elem, obj.getName(), obj.getType().getElemType(), obj.getAdr(), obj.getLevel());
+			}
+		} else {
+			designator.obj = obj;
+		}
 	}
+	
+	public void visit(ElemDesignKindFirstNode firstNode) {
+		// Save array obj
+		Designator designator = (Designator)firstNode.getParent().getParent();
+		firstNode.obj = Tab.find(designator.getName());
+	}
+
 	
 	public void visit(Assignment assignment) {
 		Struct sourceType = assignment.getExpr().struct;
@@ -130,8 +150,8 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Not compatible types in assignment", assignment);
 		}
 		int destinationKind = assignment.getDesignator().obj.getKind() ;
-		if (destinationKind != Obj.Var) {
-			report_error("Operand is not a variable", assignment);
+		if (destinationKind != Obj.Var && destinationKind != Obj.Elem) {
+			report_error("Destination is not a variable", assignment);
 		}
 	}
 	
@@ -140,8 +160,8 @@ public class SemanticPass extends VisitorAdaptor {
 		if (!designatorType.equals(Tab.intType)) {
 			report_operations_type_error(inc);
 		}
-		int designatorKind = inc.getDesignator().obj.getKind() ;
-		if (designatorKind != Obj.Var) {
+		int destinationKind = inc.getDesignator().obj.getKind() ;
+		if (destinationKind != Obj.Var && destinationKind != Obj.Elem) {
 			report_error("Increment operand is not a variable", inc);
 		}
 	}
@@ -151,8 +171,8 @@ public class SemanticPass extends VisitorAdaptor {
 		if (!designatorType.equals(Tab.intType)) {
 			report_operations_type_error(dec);
 		}
-		int designatorKind = dec.getDesignator().obj.getKind() ;
-		if (designatorKind != Obj.Var) {
+		int destinationKind = dec.getDesignator().obj.getKind() ;
+		if (destinationKind != Obj.Var && destinationKind != Obj.Elem) {
 			report_error("Decrement operand is not a variable", dec);
 		}
 	}
@@ -231,6 +251,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ArrayFactor arrayFactor) {
 		if (!arrayFactor.getExpr().struct.equals(Tab.intType)) {
 			report_error("Array length must be Int type", arrayFactor);
+			arrayFactor.struct = Tab.noType;
 		}
 		arrayFactor.struct = Utils.arrayType(arrayFactor.getType().struct);
 	}

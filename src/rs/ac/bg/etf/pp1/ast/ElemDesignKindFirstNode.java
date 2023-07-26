@@ -5,24 +5,13 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class ElemDesignKindFirstNode implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private String typeName;
-
-    public Type (String typeName) {
-        this.typeName=typeName;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName=typeName;
+    public ElemDesignKindFirstNode () {
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +48,10 @@ public class Type implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
-
-        buffer.append(" "+tab+typeName);
-        buffer.append("\n");
+        buffer.append("ElemDesignKindFirstNode(\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [ElemDesignKindFirstNode]");
         return buffer.toString();
     }
 }

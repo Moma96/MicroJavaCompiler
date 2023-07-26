@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 25/6/2023 0:18:47
+// 26/6/2023 23:1:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class SimpleVarDeclType extends VarDeclKind {
+public class SimpleDesignatorKind extends DesignatorKind {
 
-    public SimpleVarDeclType () {
+    public SimpleDesignatorKind () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class SimpleVarDeclType extends VarDeclKind {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("SimpleVarDeclType(\n");
+        buffer.append("SimpleDesignatorKind(\n");
 
         buffer.append(tab);
-        buffer.append(") [SimpleVarDeclType]");
+        buffer.append(") [SimpleDesignatorKind]");
         return buffer.toString();
     }
 }

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 25/6/2023 0:18:48
+// 26/6/2023 23:1:16
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -24,12 +24,16 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstAssignmentList ConstAssignmentList) { }
     public void visit(StatementList StatementList) { }
     public void visit(VarDeclKind VarDeclKind) { }
+    public void visit(DesignatorKind DesignatorKind) { }
     public void visit(Type Type) { visit(); }
     public void visit(BoolConst BoolConst) { visit(); }
     public void visit(CharConst CharConst) { visit(); }
     public void visit(NumConst NumConst) { visit(); }
     public void visit(NoPrintWidth NoPrintWidth) { visit(); }
     public void visit(PrintWidth PrintWidth) { visit(); }
+    public void visit(ElemDesignKindFirstNode ElemDesignKindFirstNode) { visit(); }
+    public void visit(SimpleDesignatorKind SimpleDesignatorKind) { visit(); }
+    public void visit(ElemDesignatorKind ElemDesignatorKind) { visit(); }
     public void visit(Designator Designator) { visit(); }
     public void visit(ArrayFactor ArrayFactor) { visit(); }
     public void visit(ParenFactor ParenFactor) { visit(); }
@@ -57,8 +61,8 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MethodDecl MethodDecl) { visit(); }
     public void visit(NoMethodDeclarations NoMethodDeclarations) { visit(); }
     public void visit(MethodDeclarations MethodDeclarations) { visit(); }
-    public void visit(SimpleVarDeclType SimpleVarDeclType) { visit(); }
-    public void visit(ArrayVarDeclType ArrayVarDeclType) { visit(); }
+    public void visit(SimpleVarDeclKind SimpleVarDeclKind) { visit(); }
+    public void visit(ArrayVarDeclKind ArrayVarDeclKind) { visit(); }
     public void visit(VarDeclName VarDeclName) { visit(); }
     public void visit(OneVarDeclName OneVarDeclName) { visit(); }
     public void visit(VarDeclNames VarDeclNames) { visit(); }
