@@ -6,9 +6,12 @@ program MJProgram
 	
 	int d, b, array[];
 	char charArray[];
+	bool boolean;
 {
 	void main()
 	{
+		boolean = array.findAny(5);
+	
 		array = new int[5];
 		charArray = new char[5];
 		d = -5 * (one + 4);

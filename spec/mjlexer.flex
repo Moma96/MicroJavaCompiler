@@ -50,6 +50,7 @@ import java_cup.runtime.Symbol;
 "extends" 	{ return new_symbol(sym.EXTENDS, yytext()); }
 "continue" 	{ return new_symbol(sym.CONTINUE, yytext()); }
 "foreach" 	{ return new_symbol(sym.FOREACH, yytext()); }
+"findAny"   { return new_symbol(sym.FINDANY, yytext()); }
 
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-" 		{ return new_symbol(sym.MINUS, yytext()); } 
@@ -86,6 +87,6 @@ import java_cup.runtime.Symbol;
 ("true"|"false")	{ return new_symbol(sym.BOOL, new Integer(yytext().equalsIgnoreCase("true") ? 1 : 0)); }
 "'"."'"				{ return new_symbol(sym.CHAR, new Character(yytext().charAt(1))); }
 [0-9]+  			{ return new_symbol(sym.NUM, new Integer(yytext())); }
-([a-z]|[A-Z])[a-z|A-Z|0-9|_]* 	{return new_symbol (sym.IDENT, yytext()); }
+([a-z]|[A-Z])[a-z|A-Z|0-9|_]*	{return new_symbol (sym.IDENT, yytext()); }
 
 . { System.err.println("Lexical error: "+yytext()+" ["+(yyline+1)+", "+yycolumn+"]"); }

@@ -47,7 +47,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(Assignment assignment) {
-		Struct sourceType = assignment.getExpr().struct;
+		Struct sourceType = assignment.getRightHandSide().struct;
 		if (sourceType.getKind() == Struct.Array) {
 			Code.put(Code.newarray);
 			if (sourceType.getElemType() == Tab.charType) {

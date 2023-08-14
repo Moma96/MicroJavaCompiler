@@ -38,9 +38,9 @@ init with {:
 	errorDetected = false;
 :}
 
-terminal PROGRAM, CONST, SEMI, LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID, NEW;
+terminal PROGRAM, CONST, SEMI, LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID, NEW, DOT, FINDANY;
 /* only for lexer: */
-terminal IF, ELSE, BREAK, CLASS, WHILE, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, DOT, ARROW;
+terminal IF, ELSE, BREAK, CLASS, WHILE, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, ARROW;
 terminal Integer BOOL;
 terminal Character CHAR;
 terminal Integer NUM;
@@ -64,7 +64,7 @@ nonterminal Addop Addop;
 nonterminal PrintParam PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator, ElemDesignKindFirstNode;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, Const;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, RightHandSide, Expr, Term, Factor, Const;
 
 Program ::= (Program) PROGRAM ProgramName:P1 ConstDeclList:C2 VarDeclList:V3 LBRACE MethodDeclList:M4 RBRACE {: RESULT=new Program(P1, C2, V3, M4); RESULT.setLine(P1left); :};
 
@@ -129,12 +129,17 @@ Statement ::= (ErrorStatement) error SEMI:k
 			(PrintStatement) PRINT LPAREN Expr:E1 PrintParam:P2 RPAREN SEMI {: RESULT=new PrintStatement(E1, P2); RESULT.setLine(E1left); :}
 			;
 
-DesignatorStatement ::= (Assignment) Designator:destination EQUALS Expr:source {: RESULT=new Assignment(destination, source); RESULT.setLine(destinationleft); :}
+DesignatorStatement ::= (Assignment) Designator:lhs EQUALS RightHandSide:rhs {: RESULT=new Assignment(lhs, rhs); RESULT.setLine(lhsleft); :}
 						|
 						(IncStatement) Designator:D1 INC {: RESULT=new IncStatement(D1); RESULT.setLine(D1left); :}
 						|
 						(DecStatement) Designator:D1 DEC {: RESULT=new DecStatement(D1); RESULT.setLine(D1left); :}
 						;
+
+RightHandSide ::= (RightHandExpression) Expr:expr {: RESULT=new RightHandExpression(expr); RESULT.setLine(exprleft); :}
+				|
+				(RightHandFindAny) Designator:sourceArray DOT FINDANY LPAREN Expr:expr RPAREN {: RESULT=new RightHandFindAny(sourceArray, expr); RESULT.setLine(sourceArrayleft); :}
+				;
 
 Expr ::= (AddopExpr) Expr:E1 Addop:A2 Term:T3 {: RESULT=new AddopExpr(E1, A2, T3); RESULT.setLine(E1left); :}
 		|

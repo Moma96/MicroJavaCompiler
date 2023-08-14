@@ -5,13 +5,16 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorFactor extends Factor {
+public class RightHandFindAny extends RightHandSide {
 
     private Designator Designator;
+    private Expr Expr;
 
-    public DesignatorFactor (Designator Designator) {
+    public RightHandFindAny (Designator Designator, Expr Expr) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
+        this.Expr=Expr;
+        if(Expr!=null) Expr.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -22,28 +25,39 @@ public class DesignatorFactor extends Factor {
         this.Designator=Designator;
     }
 
+    public Expr getExpr() {
+        return Expr;
+    }
+
+    public void setExpr(Expr Expr) {
+        this.Expr=Expr;
+    }
+
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
+        if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorFactor(\n");
+        buffer.append("RightHandFindAny(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -51,8 +65,14 @@ public class DesignatorFactor extends Factor {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
+        if(Expr!=null)
+            buffer.append(Expr.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
         buffer.append(tab);
-        buffer.append(") [DesignatorFactor]");
+        buffer.append(") [RightHandFindAny]");
         return buffer.toString();
     }
 }

@@ -76,8 +76,10 @@ public class SemanticPass extends VisitorAdaptor {
 		for(ConstAssignment constAssignment: currentConstAssignments) {
 			if (Tab.find(constAssignment.getConstName()) != Tab.noObj) {
 				report_error("Const '" + constAssignment.getConstName() + "' is already declared in current scope", constDecl);
+				constAssignment.obj = Tab.noObj;
 			} else if (!constAssignment.getConst().struct.assignableTo(constDecl.getType().struct)){
 				report_error("Const '" + constAssignment.getConstName() + "' type is not compatible with assigned value", constDecl);
+				constAssignment.obj = Tab.noObj;
 			} else {
 				report_info("Const declared '" + constAssignment.getConstName() + "'", constDecl);
 				int constValue = Utils.getConstValue(constAssignment.getConst());
@@ -121,6 +123,7 @@ public class SemanticPass extends VisitorAdaptor {
 		if (obj == Tab.noObj) {
 			report_error("Name " + designator.getName() + " is not declared", designator);
 			designator.obj = Tab.noObj;
+			return;
 		}
 		if (designator.getDesignatorKind() instanceof ElemDesignatorKind) {
 			ElemDesignatorKind elemDesignatorKind = (ElemDesignatorKind)designator.getDesignatorKind();
@@ -144,15 +147,34 @@ public class SemanticPass extends VisitorAdaptor {
 
 	
 	public void visit(Assignment assignment) {
-		Struct sourceType = assignment.getExpr().struct;
-		Struct destinationType = assignment.getDesignator().obj.getType();
-		if (!sourceType.assignableTo(destinationType)) {
+		Struct rhsType = assignment.getRightHandSide().struct;
+		Struct lhsType = assignment.getDesignator().obj.getType();
+		if (!rhsType.assignableTo(lhsType)) {
 			report_error("Not compatible types in assignment", assignment);
 		}
 		int destinationKind = assignment.getDesignator().obj.getKind() ;
 		if (destinationKind != Obj.Var && destinationKind != Obj.Elem) {
 			report_error("Destination is not a variable", assignment);
 		}
+	}
+	
+	public void visit(RightHandFindAny rhFindAny) {
+		rhFindAny.struct = Utils.boolType;
+		Struct arrayType = rhFindAny.getDesignator().obj.getType();
+		report_info(rhFindAny.toString(), rhFindAny);
+		if (arrayType.getKind() != Struct.Array) {
+			report_error("FindAny is supported only for arrays", rhFindAny);
+			return;
+		}
+		Struct exprType = rhFindAny.getExpr().struct;
+		if (!exprType.assignableTo(arrayType.getElemType())) {
+			report_error("Array element type is uncompatible with expression type", rhFindAny);
+			return;
+		}
+	}
+	
+	public void visit(RightHandExpression rhExpr) {
+		rhExpr.struct = rhExpr.getExpr().struct;
 	}
 	
 	public void visit(IncStatement inc) {

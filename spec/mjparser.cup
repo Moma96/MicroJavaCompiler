@@ -38,9 +38,9 @@ init with {:
 	errorDetected = false;
 :}
 
-terminal PROGRAM, CONST, SEMI, LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID, NEW;
+terminal PROGRAM, CONST, SEMI, LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, EQUALS, RETURN, PLUS, MINUS, MUL, DIV, MOD, INC, DEC, PRINT, VOID, NEW, DOT, FINDANY;
 /* only for lexer: */
-terminal IF, ELSE, BREAK, CLASS, WHILE, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, DOT, ARROW;
+terminal IF, ELSE, BREAK, CLASS, WHILE, READ, EXTENDS, CONTINUE, FOREACH, EQ, NEQ, G, GEQ, L, LEQ, AND, OR, COLON, ARROW;
 terminal Integer BOOL;
 terminal Character CHAR;
 terminal Integer NUM;
@@ -49,7 +49,7 @@ terminal String IDENT;
 nonterminal MethodDeclList, ConstDeclList, ConstDecl, ConstAssignmentList, VarDeclList, VarDecl, VarDeclNameList, VarDeclKind, DesignatorKind, StatementList, Statement, DesignatorStatement, Assignop, Mulop, Addop, PrintParam;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgramName, MethodDecl, VarDeclName, ConstAssignment, MethodTypeName, Designator, ElemDesignKindFirstNode;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Expr, Term, Factor, Const;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, RightHandSide, Expr, Term, Factor, Const;
 
 Program ::= (Program) PROGRAM ProgramName ConstDeclList VarDeclList LBRACE MethodDeclList RBRACE;
 
@@ -114,12 +114,17 @@ Statement ::= (ErrorStatement) error SEMI:k
 			(PrintStatement) PRINT LPAREN Expr PrintParam RPAREN SEMI
 			;
 
-DesignatorStatement ::= (Assignment) Designator:destination EQUALS Expr:source
+DesignatorStatement ::= (Assignment) Designator:lhs EQUALS RightHandSide:rhs
 						|
 						(IncStatement) Designator INC
 						|
 						(DecStatement) Designator DEC
 						;
+
+RightHandSide ::= (RightHandExpression) Expr:expr
+				|
+				(RightHandFindAny) Designator:sourceArray DOT FINDANY LPAREN Expr:expr RPAREN
+				;
 
 Expr ::= (AddopExpr) Expr Addop Term
 		|
