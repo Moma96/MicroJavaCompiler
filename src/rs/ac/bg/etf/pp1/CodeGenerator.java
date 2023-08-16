@@ -46,9 +46,25 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.load(firstNode.obj);
 	}
 	
+	public void visit(ElemDesignatorKind elemDesignatorKind) {
+		// duplicate array address and index and then pop index for member access check
+		Code.put(Code.dup2);
+		Code.put(Code.pop);
+		Utils.callMethod(Utils.getArrayMemberAccessGuardAdr());
+		
+		// duplicate array address and index for array index check
+		Code.put(Code.dup2);
+		Utils.callMethod(Utils.getArrayIndexGuardAdr());
+	}
+	
 	public void visit(Assignment assignment) {
 		Struct sourceType = assignment.getRightHandSide().struct;
 		if (sourceType.getKind() == Struct.Array) {
+			// length is loaded
+			// duplicate n to spend one for array length check
+			Code.put(Code.dup);
+			Utils.callMethod(Utils.getArrayLengthGuardAdr());
+
 			Code.put(Code.newarray);
 			if (sourceType.getElemType() == Tab.charType) {
 				Code.put(0);
@@ -95,9 +111,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		} else if (Tab.charType.equals(print.getExpr().struct)) {
 			Code.put(Code.bprint);
 		} else if (Utils.boolType.equals(print.getExpr().struct)) {
-			int printBoolAdrOffset = Utils.getPrintBoolAdr() - Code.pc;
-			Code.put(Code.call);
-			Code.put2(printBoolAdrOffset);
+			Utils.callMethod(Utils.getPrintBoolAdr());
 		}
 	}
 	
@@ -176,8 +190,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(RightHandFindAny findAny) {
 		// first argument is loaded - array address
 		// second argument is loaded - expression result
-		int findAnyAdrOffset = Utils.getFindAnyAdr() - Code.pc;
-		Code.put(Code.call);
-		Code.put2(findAnyAdrOffset);
+		Utils.callMethod(Utils.getFindAnyAdr());
 	}
 }

@@ -29,6 +29,27 @@ public class Utils {
 		return _findAnyAdr;
 	}
 	
+	private static int _arrayLengthGuardAdr;
+	public static int getArrayLengthGuardAdr() {
+		return _arrayLengthGuardAdr;
+	}
+	
+	private static int _arrayIndexGuardAdr;
+	public static int getArrayIndexGuardAdr() {
+		return _arrayIndexGuardAdr;
+	}
+	
+	private static int _arrayMemberAccessGuardAdr;
+	public static int getArrayMemberAccessGuardAdr() {
+		return _arrayMemberAccessGuardAdr;
+	}
+	
+	public static void callMethod(int adr) {
+		int adrOffset = adr - Code.pc;
+		Code.put(Code.call);
+		Code.put2(adrOffset);
+	}
+	
 	public static void tabInit() {
 		Tab.init();
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
@@ -37,15 +58,13 @@ public class Utils {
 	public static void codeGeneratorInit() {
 		printBoolInit();
 		findAnyInit();
+		guardsInit();
 	}
 	
 	public static void printBoolInit() {
 		_printBoolAdr = Code.pc;
-		Code.put(Code.enter);
-		int numberOfArguments = 2;
-		Code.put(numberOfArguments);
-		Code.put(numberOfArguments);
-		
+		enterMethod(2, 0);
+
 		 // argument 1 - value
 		Code.put(Code.load_n);
 		
@@ -54,7 +73,7 @@ public class Utils {
 		int falseCaseAddress = Code.pc - 2;
 		
 		// value == 1
-		Utils.print("true");
+		print("true");
 		
 		Code.putJump(0);
 		int exitAddress = Code.pc - 2;
@@ -62,7 +81,7 @@ public class Utils {
 		Code.fixup(falseCaseAddress);
 		
 		// value == 0
-		Utils.print("false");
+		print("false");
 		
 		Code.fixup(exitAddress);
 		Code.put(Code.exit);
@@ -84,11 +103,7 @@ public class Utils {
 	
 	public static void findAnyInit() {
 		_findAnyAdr = Code.pc;
-		Code.put(Code.enter);
-		int numberOfArguments = 2;
-		int numberOfVars = 1;
-		Code.put(numberOfArguments);
-		Code.put(numberOfArguments + numberOfVars);
+		enterMethod(2, 1);
 		
 		 // argument 1 - array adr
 		Code.put(Code.load_n);
@@ -133,6 +148,86 @@ public class Utils {
 		Code.fixup(exitAddress);
 		Code.put(Code.exit);
 		Code.put(Code.return_);
+	}
+	
+	public static void guardsInit() {
+		arrayLengthGuardInit();
+		arrayIndexGuardInit();
+		arrayMemberGuardInit();
+	}
+	
+	public static void arrayLengthGuardInit() {
+		_arrayLengthGuardAdr = Code.pc;
+		enterMethod(1, 0);
+		
+		 // argument 1 - array length
+		Code.put(Code.load_n);
+		
+		Code.loadConst(0);
+		Code.putFalseJump(5, 0);
+		int errorAdr = Code.pc - 2;
+		
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		
+		Code.fixup(errorAdr);
+		print("\nArray length must not be a negative number!");
+		Code.put(Code.trap);
+		Code.put(0);
+	}
+	
+	public static void arrayIndexGuardInit() {
+		_arrayIndexGuardAdr = Code.pc;
+		enterMethod(2, 0);
+		
+		 // argument 1 - array adr
+		Code.put(Code.load_n);
+		Code.put(Code.arraylength);
+		
+		// argument 2 - index
+		Code.put(Code.load_1);
+		Code.putFalseJump(4, 0);
+		int indexOverflowErrorAdr = Code.pc - 2;
+		
+		// argument 2 - index
+		Code.put(Code.load_1);
+		Code.loadConst(0);
+		Code.putFalseJump(5, 0);
+		int indexUnderflowErrorAdr = Code.pc - 2;
+		
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		
+		Code.fixup(indexOverflowErrorAdr);
+		Code.fixup(indexUnderflowErrorAdr);
+		print("\nArray index is out of bounds!");
+		Code.put(Code.trap);
+		Code.put(1);
+	}
+
+	public static void arrayMemberGuardInit() {
+		_arrayMemberAccessGuardAdr = Code.pc;
+		enterMethod(1, 0);
+		
+		 // argument 1 - array adr
+		Code.put(Code.load_n);
+		Code.loadConst(0);
+		Code.putFalseJump(1, 0);
+		int errorAdr = Code.pc - 2;
+		
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		
+		Code.fixup(errorAdr);
+		print("\nArray member access before array initialization!");
+		Code.put(Code.trap);
+		Code.put(2);
+	}
+	
+	private static void enterMethod(int numberOfArguments, int numberOfLocalVars) {
+		Code.put(Code.enter);
+		Code.put(numberOfArguments);
+		Code.put(numberOfArguments + numberOfLocalVars);
 	}
 	
 	public static boolean isSympleType(Struct struct) {
