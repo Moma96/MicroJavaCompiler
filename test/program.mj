@@ -10,8 +10,6 @@ program MJProgram
 {
 	void main()
 	{
-		boolean = array.findAny(5);
-	
 		array = new int[5];
 		charArray = new char[5];
 		d = -5 * (one + 4);
@@ -22,6 +20,7 @@ program MJProgram
 		b--;
 		array[b] = 2;
 		charArray[b] = 'a';
+		boolean = array.findAny(2 + 1 - 2/2);
 		
 		// print test
 		print(boolConst);
@@ -29,5 +28,6 @@ program MJProgram
 		print(one, 2);
 		print(-(array[b + 1] - 1) * array[b]);
 		print(charArray[b]);
+		print(boolean, 10);
 	}
 }

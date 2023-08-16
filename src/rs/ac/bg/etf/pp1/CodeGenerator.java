@@ -35,14 +35,14 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(Designator designator) {
 		SyntaxNode parent = designator.getParent();
 		
-		if (DesignatorFactor.class == parent.getClass()) {
+		if (DesignatorFactor.class == parent.getClass() || RightHandFindAny.class == parent.getClass()) {
 			// Designator is right-hand side operand
 			Code.load(designator.obj);
 		}
 	}
 	
 	public void visit(ElemDesignKindFirstNode firstNode) {
-		// put array address before index
+		// Put array address before index
 		Code.load(firstNode.obj);
 	}
 	
@@ -88,8 +88,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	static int DEFAULT_PRINT_WIDTH = 5;
 	
 	public void visit(PrintStatement print) {
-		// first argument is on estack - value
-		// second argument is on estack - width
+		// first argument is loaded - value
+		// second argument is loaded - width
 		if (Tab.intType.equals(print.getExpr().struct)) {
 			Code.put(Code.print);
 		} else if (Tab.charType.equals(print.getExpr().struct)) {
@@ -171,5 +171,13 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(MethodDecl methodDecl) {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
+	}
+	
+	public void visit(RightHandFindAny findAny) {
+		// first argument is loaded - array address
+		// second argument is loaded - expression result
+		int findAnyAdrOffset = Utils.getFindAnyAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(findAnyAdrOffset);
 	}
 }

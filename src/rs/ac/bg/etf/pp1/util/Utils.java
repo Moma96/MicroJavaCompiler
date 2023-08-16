@@ -24,6 +24,11 @@ public class Utils {
 		return _printBoolAdr;
 	}
 	
+	private static int _findAnyAdr;
+	public static int getFindAnyAdr() {
+		return _findAnyAdr;
+	}
+	
 	public static void tabInit() {
 		Tab.init();
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
@@ -31,6 +36,7 @@ public class Utils {
 	
 	public static void codeGeneratorInit() {
 		printBoolInit();
+		findAnyInit();
 	}
 	
 	public static void printBoolInit() {
@@ -45,26 +51,22 @@ public class Utils {
 		
 		Code.loadConst(1);
 		Code.putFalseJump(0, 0);
-		int falsePatchAddress = Code.pc - 2;
+		int falseCaseAddress = Code.pc - 2;
 		
 		// value == 1
 		Utils.print("true");
 		
 		Code.putJump(0);
-		int exitPatchAddress = Code.pc - 2;
+		int exitAddress = Code.pc - 2;
 		
-		Code.fixup(falsePatchAddress);
+		Code.fixup(falseCaseAddress);
 		
 		// value == 0
 		Utils.print("false");
 		
-		Code.fixup(exitPatchAddress);
+		Code.fixup(exitAddress);
 		Code.put(Code.exit);
 		Code.put(Code.return_);
-	}
-	
-	public static boolean isSympleType(Struct struct) {
-		return struct.equals(Tab.intType) || struct.equals(Tab.charType) || struct.equals(Utils.boolType);
 	}
 	
 	public static void print(String value) {
@@ -78,6 +80,63 @@ public class Utils {
 			}
 			Code.put(Code.bprint);
 		}
+	}
+	
+	public static void findAnyInit() {
+		_findAnyAdr = Code.pc;
+		Code.put(Code.enter);
+		int numberOfArguments = 2;
+		int numberOfVars = 1;
+		Code.put(numberOfArguments);
+		Code.put(numberOfArguments + numberOfVars);
+		
+		 // argument 1 - array adr
+		Code.put(Code.load_n);
+		
+		Code.put(Code.arraylength);
+		int whileAdr = Code.pc;
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		Code.put(Code.store_2);
+		
+		Code.put(Code.load_2);
+		Code.loadConst(0);
+		// while index >= 0
+		Code.putFalseJump(5, 0);
+		int exitWhileAddress = Code.pc - 2;
+		
+		// argument 1 - array adr
+		Code.put(Code.load_n);
+		Code.put(Code.load_2);
+		// load element on index load_2
+		Code.put(Code.aload);
+		// argument 2 - value to search
+		Code.put(Code.load_1);
+		// exit if equal
+		Code.putFalseJump(1, 0);
+		int exitValueFoundAddress = Code.pc - 2;
+		
+		Code.put(Code.load_2);		
+		Code.putJump(whileAdr);
+		
+		Code.fixup(exitWhileAddress);
+		// return 0
+		Code.loadConst(0);
+		
+		Code.putJump(0);
+		int exitAddress = Code.pc - 2;
+		
+		Code.fixup(exitValueFoundAddress);
+		// return 1
+		Code.loadConst(1);
+		
+		Code.fixup(exitAddress);
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	public static boolean isSympleType(Struct struct) {
+		return struct.equals(Tab.intType) || struct.equals(Tab.charType) || struct.equals(Utils.boolType);
 	}
 
 	public static int getConstValue(Const const_) {
