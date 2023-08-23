@@ -29,5 +29,8 @@ program MJProgram
 		print(-(array[b + 1] - 1) * array[b]);
 		print(charArray[b]);
 		print(boolean, 10);
+		
+		read(array[4]);
+		print(array[4]);
 	}
 }

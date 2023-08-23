@@ -41,22 +41,6 @@ public class CodeGenerator extends VisitorAdaptor {
 		}
 	}
 	
-	public void visit(ElemDesignKindFirstNode firstNode) {
-		// Put array address before index
-		Code.load(firstNode.obj);
-	}
-	
-	public void visit(ElemDesignatorKind elemDesignatorKind) {
-		// duplicate array address and index and then pop index for member access check
-		Code.put(Code.dup2);
-		Code.put(Code.pop);
-		Utils.callMethod(Utils.getArrayMemberAccessGuardAdr());
-		
-		// duplicate array address and index for array index check
-		Code.put(Code.dup2);
-		Utils.callMethod(Utils.getArrayIndexGuardAdr());
-	}
-	
 	public void visit(Assignment assignment) {
 		Struct sourceType = assignment.getRightHandSide().struct;
 		if (sourceType.getKind() == Struct.Array) {
@@ -74,6 +58,72 @@ public class CodeGenerator extends VisitorAdaptor {
 		}
 		Code.store(assignment.getDesignator().obj);
 	}
+	
+	//region Arrays
+	
+	public void visit(ElemDesignKindFirstNode firstNode) {
+		// Put array address before index
+		Code.load(firstNode.obj);
+	}
+	
+	public void visit(ElemDesignatorKind elemDesignatorKind) {
+		// duplicate array address and index and then pop index for member access check
+		Code.put(Code.dup2);
+		Code.put(Code.pop);
+		Utils.callMethod(Utils.getArrayMemberAccessGuardAdr());
+		
+		// duplicate array address and index for array index check
+		Code.put(Code.dup2);
+		Utils.callMethod(Utils.getArrayIndexGuardAdr());
+	}
+	
+	public void visit(RightHandFindAny findAny) {
+		// first argument is loaded - array address
+		// second argument is loaded - expression result
+		Utils.callMethod(Utils.getFindAnyAdr());
+	}
+	
+	//endregion Arrays
+	
+	public void visit(ReadStatement read) {
+		Obj designator = read.getDesignator().obj;
+		Struct designatorType = designator.getType();
+		if (Tab.charType.equals(designatorType)) {
+			Code.put(Code.bread);
+		} else {
+			Code.put(Code.read);
+		}
+		Code.store(designator);
+	}
+	
+	//region Print
+	
+	static int DEFAULT_PRINT_WIDTH = 5;
+	
+	public void visit(PrintStatement print) {
+		// first argument is loaded - value
+		// second argument is loaded - width
+		Struct exprType = print.getExpr().struct;
+		if (Tab.intType.equals(exprType)) {
+			Code.put(Code.print);
+		} else if (Tab.charType.equals(exprType)) {
+			Code.put(Code.bprint);
+		} else if (Utils.boolType.equals(exprType)) {
+			Utils.callMethod(Utils.getPrintBoolAdr());
+		}
+	}
+	
+	public void visit(PrintWidth printWidth) {
+		Code.loadConst(printWidth.getNum());
+	}
+	
+	public void visit(NoPrintWidth noPrintWidth) {
+		Code.loadConst(DEFAULT_PRINT_WIDTH);
+	}
+	
+	//endregion Print
+	
+	//region Mathematical operations
 	
 	public void visit(IncStatement inc) {
 		Obj designatorObj = inc.getDesignator().obj;
@@ -98,34 +148,6 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.sub);
 		Code.store(dec.getDesignator().obj);
 	}
-	
-	//region PRINT
-	
-	static int DEFAULT_PRINT_WIDTH = 5;
-	
-	public void visit(PrintStatement print) {
-		// first argument is loaded - value
-		// second argument is loaded - width
-		if (Tab.intType.equals(print.getExpr().struct)) {
-			Code.put(Code.print);
-		} else if (Tab.charType.equals(print.getExpr().struct)) {
-			Code.put(Code.bprint);
-		} else if (Utils.boolType.equals(print.getExpr().struct)) {
-			Utils.callMethod(Utils.getPrintBoolAdr());
-		}
-	}
-	
-	public void visit(PrintWidth printWidth) {
-		Code.loadConst(printWidth.getNum());
-	}
-	
-	public void visit(NoPrintWidth noPrintWidth) {
-		Code.loadConst(DEFAULT_PRINT_WIDTH);
-	}
-	
-	//endregion PRINT
-	
-	//region Mathematical operations
 	
 	public void visit(AddopExpr addopExpr) {
 		Addop addop = addopExpr.getAddop();
@@ -185,11 +207,5 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(MethodDecl methodDecl) {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
-	}
-	
-	public void visit(RightHandFindAny findAny) {
-		// first argument is loaded - array address
-		// second argument is loaded - expression result
-		Utils.callMethod(Utils.getFindAnyAdr());
 	}
 }

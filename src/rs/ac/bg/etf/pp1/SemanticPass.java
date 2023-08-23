@@ -212,6 +212,12 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 	
+	public void visit(ReadStatement read) {
+		Struct designatorType = read.getDesignator().obj.getType();
+		if (!Utils.isIntOrChar(designatorType))
+			report_error("READ operand must be int or char", read);
+	}
+	
 	public void visit(PrintStatement print) {
 		Struct factorStruct = print.getExpr().struct;
 		if (!Utils.isSympleType(factorStruct))

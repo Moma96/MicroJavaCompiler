@@ -73,16 +73,39 @@
 	<target name="runObj" depends="disasm">
 		<java classname="rs.etf.pp1.mj.runtime.Run">
 			<arg value="test/program.obj" />
+			<redirector input="test/input.txt"></redirector>
+			<classpath>
+				<pathelement location="lib/mj-runtime.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runObjDebug" depends="disasm">
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="-debug" />
+			<arg value="test/program.obj" />
+			<redirector input="test/input.txt"></redirector>
+			<classpath>
+				<pathelement location="lib/mj-runtime.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runTest301" depends="disasm">
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="test/test301.obj" />
+			<redirector input="test/test301input.txt"></redirector>
 			<classpath>
 				<pathelement location="lib/mj-runtime.jar" />
 			</classpath>
 		</java>
 	</target>
 	
-	<target name="runObjDebug" depends="disasm">
+	<target name="runTest301Debug" depends="disasm">
 		<java classname="rs.etf.pp1.mj.runtime.Run">
 			<arg value="-debug" />
-			<arg value="test/program.obj" />
+			<arg value="test/test301.obj" />
+			<redirector input="test/test301input.txt"></redirector>
 			<classpath>
 				<pathelement location="lib/mj-runtime.jar" />
 			</classpath>

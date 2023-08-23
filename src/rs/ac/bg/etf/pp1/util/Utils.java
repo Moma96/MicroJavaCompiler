@@ -234,6 +234,10 @@ public class Utils {
 		return struct.equals(Tab.intType) || struct.equals(Tab.charType) || struct.equals(Utils.boolType);
 	}
 
+	public static boolean isIntOrChar(Struct struct) {
+		return struct.equals(Tab.intType) || struct.equals(Tab.charType);
+	}
+
 	public static int getConstValue(Const const_) {
 		if (const_ instanceof NumConst) {
 			return ((NumConst)const_).getN1();

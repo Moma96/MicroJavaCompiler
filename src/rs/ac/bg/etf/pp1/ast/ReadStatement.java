@@ -5,11 +5,11 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class IncStatement extends DesignatorStatement {
+public class ReadStatement extends Statement {
 
     private Designator Designator;
 
-    public IncStatement (Designator Designator) {
+    public ReadStatement (Designator Designator) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
     }
@@ -43,7 +43,7 @@ public class IncStatement extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("IncStatement(\n");
+        buffer.append("ReadStatement(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -52,7 +52,7 @@ public class IncStatement extends DesignatorStatement {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [IncStatement]");
+        buffer.append(") [ReadStatement]");
         return buffer.toString();
     }
 }
