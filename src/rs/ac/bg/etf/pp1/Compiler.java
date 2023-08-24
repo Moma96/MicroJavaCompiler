@@ -25,30 +25,17 @@ public class Compiler {
 		DOMConfigurator.configure(Log4JUtils.instance().findLoggerConfigFile());
 		Log4JUtils.instance().prepareLogFile(Logger.getRootLogger());
 	}
-	
-//	static int readInt () throws IOException {
-//		int val = 0;
-//		int prev = ' ';
-//		int b = System.in.read();
-//		while (b < '0' || b > '9') {
-//			prev = b; b = System.in.read();
-//		}
-//		while (b >= '0' && b <= '9') {
-//			val = 10 * val + b - '0';
-//			b = System.in.read();
-//		}
-//		if (prev == '-') val = -val;
-//		return val;
-//	}
-	
+
 	public static void main(String[] args) throws Exception {
 		
-//		int var = readInt();
-//		System.out.println(var);        
 		Logger log = Logger.getLogger(Compiler.class);
 		
 		Reader br = null;
 		try {
+			if (args.length != 2) {
+				System.out.print("Number of main arguments are not valid!");
+				return;
+			}
 			String sourceCodePath = args[0];
 			File sourceCode = new File(sourceCodePath);
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
