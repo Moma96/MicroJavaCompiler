@@ -1,0 +1,11 @@
+program MJProgram
+
+	const bool boolConst = true;
+	int d, b, array[];
+	bool boolean;
+{
+	void main()
+	{
+		boolConst = array[0];
+	}
+}

@@ -111,5 +111,14 @@
 			</classpath>
 		</java>
 	</target>
+	
+	<target name="runRuntimeError" depends="disasm">
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="test/runtime-error.obj" />
+			<classpath>
+				<pathelement location="lib/mj-runtime.jar" />
+			</classpath>
+		</java>
+	</target>
 
 </project>
